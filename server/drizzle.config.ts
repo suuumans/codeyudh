@@ -6,7 +6,7 @@ export default defineConfig({
   schema: './src/db/schema',
   out: './drizzle', // Directory to store migration files
   dbCredentials: {
-    url: "postgresql://suman:mypassword@localhost:5432/postgres",
+    url: process.env.DB_URI!,
   },
   verbose: true,
   strict: true

@@ -3,8 +3,8 @@
   "module": "index.ts",
   "version": "0.0.1",
   "scripts": {
-  "start": "nodemon --exec bun run src/index.ts"
-},
+    "start": "nodemon --exec bun run src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cookie-parser": "^1.4.8",
@@ -20,6 +20,7 @@
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/pg": "^8.11.14",
+    "axios": "^1.9.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "drizzle-kit": "^0.31.1",

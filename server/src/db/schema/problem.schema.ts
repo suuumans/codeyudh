@@ -22,7 +22,7 @@ export const Problem = pgTable('problems', {
     hints: text('hints'),
     editorial: text('editorial'),
     status: statusEnum('status').notNull().default('PENDING'), // default status is PENDING
-    testCases: json('testcases'), // Array of objects like [{ input: 'input1', output: 'output1' }, { input: 'input2', output: 'output2' }]
+    testcases: json('testcases'), // Array of objects like [{ input: 'input1', output: 'output1' }, { input: 'input2', output: 'output2' }]
     codeSnippets: json('code_snippets'), // Array of objects like [{ language: 'language1', code: 'code1' }, { language: 'language2', code: 'code2' }]
     referenceSolution: json('reference_solution'),
     createdAt: timestamp('created_at', { withTimezone: true}).notNull().defaultNow(),
@@ -38,6 +38,7 @@ export const Problem = pgTable('problems', {
 
 // Relation: A Problem belongs to one User (the creator)
 export const problemsRelations = relations(Problem, ({ one, many }) => ({
+  // one to one:  Problem belongs to one User. 
     user: one(User, {
       fields: [Problem.userId],
       references: [User.id],

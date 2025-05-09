@@ -1,11 +1,17 @@
 
 import type { Request, Response } from "express";
 import { db } from "../db/db.ts";
-import { Problem } from "../db/schema/problem.schema.ts";
+import { eq } from "drizzle-orm";
 import { asyncHandler } from "../utils/asyncHandler.ts";
 import { ApiResponse } from "../utils/apiResponse.ts";
 import { ApiError } from "../utils/apiError.ts";
-import { getJudge0LanguageId, pollBatchResults, submitBatch, type Judge0Submission } from "../utils/judge0.ts";
+import { getLanguageNmae, pollBatchResults, submitBatch } from "../utils/judge0.ts";
+import { Submission } from "../db/schema/submission.schema.ts";
+import { ProblemSolved } from "../db/schema/problemSolved.schema.ts";
+import { TestCaseResult } from "../db/schema/testCaseResult.schema.ts";
+
+
+type NewSubmission = typeof Submission.$inferInsert;
 
 
 /**
@@ -57,9 +63,118 @@ export const exicuteCode = asyncHandler(async(req: Request, res: Response) => {
             }
         }
 
+        // analyse test case results
+        let allPassed = true;
+        const deailedResults = results.map(
+            (
+                result: { 
+                    stdout: string,
+                    expected_output: string,
+                    stderr: string,
+                    compile_output: string,
+                    status: string,
+                    time: number,
+                    memory: number,
+                    created_at: Date,
+                    updated_at: Date
+                },
+                index: number
+            ) => {
+            const stdout = result.stdout?.trim();
+            const expected_output = expected_outputs[index]?.trim();
+            const passed = stdout === expected_output;
+
+            if (!passed) allPassed = false;
+
+            return {
+                testCase: index + 1,
+                passed,
+                stdout,
+                expected: expected_output,
+                stderr: result.stderr ?? null,
+                compileOutput: result.compile_output,
+                status: result.status,
+                time: result.time ? `${result.time} ms` : undefined,
+                memory: result.memory ? `${result.memory} KB` : undefined,
+                createdAt: result.created_at,
+                updatedAt: result.updated_at
+            }
+            
+            // console.log(`Testcase ${index + 1}: ${passed ? "Passed" : "Failed"}`);
+            // console.log(`Input for Testcase ${index + 1}: ${stdin[index]}`);
+            // console.log(`Expected Output for Testcase ${index + 1}: ${expected_output}`);
+            // console.log(`Actual Output for Testcase ${index + 1}: ${stdout}`);
+
+            // console.log(`Matched: ${passed}`)
+            // console.log("--------------------------------------------------");
+
+        })
+
+        console.log(deailedResults);
+
+        // 6. save submission summery to database
+        const newSubmission: NewSubmission = {
+            userId,
+            problemId: problem_id,
+            sourceCode: source_code,
+            language: getLanguageNmae(language_id),
+            stdin: stdin.join("\n"),
+            stdout: JSON.stringify(deailedResults.map((result: { stdout: string }) => result.stdout)),
+            stderr: deailedResults.some((result: { stderr: string }) => result.stderr) ? JSON.stringify(deailedResults.map((result: { stderr: string }) => result.stderr)) : null,
+            compileOutput: deailedResults.some((result: { compile_output: string }) => result.compile_output) ? JSON.stringify(deailedResults.map((result: { compile_output: string }) => result.compile_output)) : null,
+            status: allPassed ? "APPROVED" : "WRONG ANSWER",
+            time: JSON.stringify(deailedResults.map((result: { time: number }) => result.time)),
+            memory: JSON.stringify(deailedResults.map((result: { memory: number }) => result.memory)),
+        }
+
+        const [submission] = await db.insert(Submission).values(newSubmission).returning();
+
+        if(allPassed) {
+            await db.insert(ProblemSolved).values({
+                userId: userId,
+                problemId: problem_id,
+                submissionId: submission.id
+            })
+            .onConflictDoUpdate({
+                target: [ProblemSolved.userId, ProblemSolved.problemId],
+                set: {
+                    submissionId: submission.id,
+                    updatedAt: new Date()
+                }
+            })
+        }
+
+        const testCaseResults = deailedResults.map((result: {
+            testCase: string,
+            passed: boolean,
+            stdout: string,
+            expected: string,
+            stderr: string,
+            compileOutput: string,
+            status: string,
+            time: string,
+            memory: string,
+        }) => ({
+            submissionId: submission.id,
+            testCase: result.testCase,
+            passed: result.passed,
+            stdout: result.stdout,
+            expected: result.expected,
+            stderr: result.stderr,
+            compileOutput: result.compileOutput,
+            status: result.status,
+            time: result.time,
+            memory: result.memory,
+
+        }))
+
+        await db.insert(TestCaseResult).values(testCaseResults);
+
+        const submissionWithTestCase = await db.select().from(Submission).where(eq(Submission.id, submission.id)).limit(1)
+
         // retutn response
         return res.status(200).json(
-            new ApiResponse(200, true, "Code executed successfully", results)
+            new ApiResponse(200, true, "Code executed successfully", submissionWithTestCase[0])
         );
 
     } catch (error) {

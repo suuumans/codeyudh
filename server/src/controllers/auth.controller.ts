@@ -4,12 +4,14 @@ import { ApiResponse } from "../utils/apiResponse"
 import { ApiError } from "../utils/apiError"
 import { db } from "../db/db.ts"
 import { User } from "../db/schema/user.schema"
-import { eq } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
 import jwt from "jsonwebtoken"
 import type { JwtPayload } from "jsonwebtoken"
 import { asyncHandler } from "../utils/asyncHandler"
 import { generateAuthTokens, generateVerificationToken } from "../utils/generateTokens.ts"
 import { emailVerificationGenContent, forgotPasswordGenContent, sendMail } from "../utils/mail.ts"
+import { UserProblems } from "../db/schema/userProblem.schema.ts"
+import { Problem } from "../db/schema/problem.schema.ts"
 
 
 
@@ -683,3 +685,39 @@ export const deleteUserProfile = asyncHandler(async(req: Request, res: Response)
         throw new ApiError(500, `Internal server error while deleting user: Please try again.`);
     }
 })
+
+/**
+ * @description get all problems solved by user
+ * @headers { Authorization: Bearer <access_token> }
+ * @route GET /api/v1/auth/problems-solved
+ * @access Private only logged in user can access
+ */
+export const getAllProblemsSolvedByUser = asyncHandler(async (req: Request, res: Response) => {
+  // get the user id from the request
+  const userId = req.user?.id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized request - user id not found");
+  }
+  try {
+    // find problems solved by user
+    const userProblemLinks = await db.select().from(UserProblems).where(eq(UserProblems.userId, userId));
+    if (!userProblemLinks || userProblemLinks.length === 0) {
+      return res.status(200).json(
+        new ApiResponse(200, true, "No problems solved by the user yet", [])
+      );
+    }
+
+    const problemIds = userProblemLinks.map((userProblemLink) => userProblemLink.problemId);
+
+    // fetch problems
+    const problems = await db.select().from(Problem).where(inArray(Problem.id, problemIds));
+    // return response
+    return res.status(200).json(
+      new ApiResponse(200, true, "Problems fetched successfully", problems)
+    );
+  } catch (error) {
+    console.error("Error getting all problems solved by user:", error);
+    throw new ApiError(500, "Internal server error while getting all problems solved by user");
+  }
+});

@@ -1,6 +1,6 @@
 
 import express from "express";
-import { exicuteCode } from "../controllers/exicuteCode.controller";
+import { exicuteCode } from "../controllers/exicuteCode.controller.ts";
 import { verifyJWT } from "../middlewares/auth.middleware";
 
 const router = express.Router();

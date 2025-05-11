@@ -1,12 +1,12 @@
 
-import { pgTable, uuid, text, varchar, integer, boolean } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, integer, boolean } from "drizzle-orm/pg-core";
 import { Submission } from "./submission.schema.ts";
 
 
 
 export const TestCaseResult = pgTable("test_case_results", {
     id: uuid("id").primaryKey().defaultRandom(),
-    submissionId: varchar("submission_id").notNull().references(() => Submission.id, { onDelete: 'cascade' }),
+    submissionId: uuid("submission_id").notNull().references(() => Submission.id, { onDelete: 'cascade' }),
     testCase: integer("test_case").notNull(),
     passed: boolean("passed").notNull(),
     stdout: text("stdout")?.notNull(),

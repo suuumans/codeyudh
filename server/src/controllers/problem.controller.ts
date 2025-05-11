@@ -112,6 +112,12 @@ export const createProblem = asyncHandler(async(req: Request, res: Response) => 
     }
 
         try {
+            // Get the user ID from the authenticated request
+            const userId = req.user?.id;
+            if (!userId) {
+                throw new ApiError(401, "Unauthorized request - user id not found");
+            }
+
             if (!referenceSolution || Object.keys(referenceSolution).length === 0) {
                 throw new ApiError(400, "Reference solution is required");
             }
@@ -129,7 +135,8 @@ export const createProblem = asyncHandler(async(req: Request, res: Response) => 
                 examples,
                 testcases,
                 codeSnippets,
-                referenceSolution
+                referenceSolution,
+                userId
             }
 
             // create new problem in the database

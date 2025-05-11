@@ -6,7 +6,7 @@ import { Submission } from "./submission.schema.ts";
 
 
 export const ProblemSolved = pgTable("problem_solved", {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: uuid("id").defaultRandom(),
     userId: uuid("user_id").notNull().references(() => User.id, { onDelete: 'cascade' }),
     problemId: uuid("problem_id").notNull().references(() => Problem.id, { onDelete: 'cascade' }),
     submissionId: uuid("submission_id").notNull().references(() => Submission.id, { onDelete: 'cascade' }),

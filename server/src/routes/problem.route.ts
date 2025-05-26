@@ -8,7 +8,7 @@ const router = express.Router();
 router.use(verifyJWT)
 router.post('/create-problem',isAdmin, createProblem);
 router.get('/get-all-problems', getAllProblems);
-router.get('get-problem-by-id/:id', getProblemById);
+router.get('/get-problem-by-id/:id', getProblemById);
 router.put('/update-problem-by-id/:id', isAdmin, updateProblemById);
 router.delete('/delete-problem-by-id/:id', isAdmin, deleteProblemById);
 router.get('/get-all-problems-solved-by-user', getAllProblemsSolvedByUser);

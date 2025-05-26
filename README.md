@@ -159,5 +159,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 [Suman Sarkar](https://x.com/suuumans)
-
-© 2025 CodeYudh. All rights reserved.

@@ -4,7 +4,7 @@ import { db } from "./db/db.ts";
 import cors from "cors"
 
 app.use(cors({
-  origin: '*',
+  origin: 'http://localhost:5173',
   credentials: true
 }))
 

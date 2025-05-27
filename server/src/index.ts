@@ -1,12 +1,6 @@
 
 import app from "./app";
 import { db } from "./db/db.ts";
-import cors from "cors"
-
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}))
 
 const PORT = process.env.PORT ?? 5050;
 

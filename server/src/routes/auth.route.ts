@@ -13,6 +13,7 @@ import {
     resetPassword,
     changePassword,
     deleteUserProfile,
+    checkAuth
  } from '../controllers/auth.controller.ts';
 import { loginUserSchema, registerUserSchema } from '../validators/auth.validators.ts';
 import { validate } from '../middlewares/validator.middleware.ts';
@@ -24,6 +25,7 @@ const router = express.Router();
 router.post('/register', validate(registerUserSchema), registerUser);
 router.post('/login',validate(loginUserSchema), loginUser);
 router.get('/verify', verifyUser);
+router.get('/check', checkAuth);
 
 // ----------- Private routes -----------
 router.use(verifyJWT);

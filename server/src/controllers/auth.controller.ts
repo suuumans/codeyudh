@@ -721,3 +721,14 @@ export const getAllProblemsSolvedByUser = asyncHandler(async (req: Request, res:
     throw new ApiError(500, "Internal server error while getting all problems solved by user");
   }
 });
+
+export const checkAuth = asyncHandler(async(req: Request, res: Response) => {
+    try {
+        return res.status(200).json(
+            new ApiResponse(200, true, "User is authenticated")
+        )
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        throw new ApiError(500, "Internal server error while checking authentication");
+    }
+})

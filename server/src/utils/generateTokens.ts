@@ -7,7 +7,7 @@ export const generateAuthTokens = async (user: { id: string, email: string, user
     const accessToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET!, {
         expiresIn: "1d",
     });
-    const refreshToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET!, {
+    const refreshToken = jwt.sign({ user: {id: user.id}, type: "refresh" }, process.env.REFRESH_TOKEN_SECRET!, {
         expiresIn: "7d",
     });
     return { accessToken, refreshToken };

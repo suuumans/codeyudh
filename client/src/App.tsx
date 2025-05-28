@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import HomePage from './pages/HomePage.tsx'
-import LoginPagge from './pages/LoginPage.tsx'
+import LoginPage from './pages/LoginPage.tsx'
 import SignUpPage from './pages/SignUpPage.tsx'
 import { Toaster } from 'react-hot-toast'
 import { useAuthStore } from './store/useAuthStore.ts'
@@ -13,7 +13,6 @@ import ProblemPage from './pages/ProblemPage.tsx'
 import AdminRoute from './components/AdminRoute.tsx'
 import { AddProblem } from './pages/AddProble.tsx'
 import Profile from './pages/Profile.tsx'
-// import { AdminRoute } from './components/AdminRoute.tsx'
 
 
 
@@ -33,6 +32,9 @@ function App() {
     )
   }
 
+  console.log("Auth User:", authUser);
+  
+
   return (
     <div className='flex flex-col items-center justify-start'>
       <Toaster/>
@@ -40,36 +42,17 @@ function App() {
       <Toaster />
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route
-            index
-            element={authUser ? <HomePage /> : <Navigate to="/login" />}
-          />
+          <Route index element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+          <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+          <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+          <Route path="/problem/:id" element={authUser ? <ProblemPage /> : <Navigate to="/login" />} />
+          <Route element={<AdminRoute />}>
+            <Route path="/add-problem" element={authUser ? <AddProblem /> : <Navigate to="/login" />} />
+          </Route>
+          <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
         </Route>
-        <Route
-          path="/signup"
-          element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/login"
-          element={!authUser ? <LoginPagge /> : <Navigate to="/" />}
-        />
-
-        <Route
-          path="/problem/:id"
-          element={authUser ? <ProblemPage /> : <Navigate to="/login" />}
-        />
-        <Route element={<AdminRoute />}>
-          <Route
-            path="/add-problem"
-            element={authUser ? <AddProblem /> : <Navigate to="/login" />}
-          />
-        </Route>
-
-        <Route
-          path="/profile"
-          element={authUser ? <Profile /> : <Navigate to="/login" />}
-        />
       </Routes>
+
     </div>
   )
 }

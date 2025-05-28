@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuthStore } from '../store/useAuthStore.ts'
@@ -10,8 +10,8 @@ import { Code, Eye, EyeOff, Mail, Loader2, Lock } from 'lucide-react'
 import { LoginSchema, type LoginSchemaType } from '../inputValidations/loginValidation.ts'
 
 
-function LoginPage() {
-
+const LoginPage: React.FC = () => {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const { login, isLoggingIn } = useAuthStore() as AuthStore
   
@@ -20,11 +20,16 @@ function LoginPage() {
   })
 
   const onSubmit = async (data: LoginSchemaType) => {
+    // console.log("Login data in the login page: ", data)
     try {
       await login(data);
-      console.log("Login Data:", data);
+      // console.log("Login Data:", data);
+      // if (success) {
+      //   navigate("/")
+      // }
     } catch (error) {
       console.error("Login failed:", error);
+      throw error;
     } 
   }
 
@@ -116,7 +121,7 @@ function LoginPage() {
                   Loading...
                 </>
               ) : (
-                "Login in"
+                "Login"
               )}
             </button>
           </form>

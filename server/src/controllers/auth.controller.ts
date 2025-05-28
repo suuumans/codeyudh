@@ -1,4 +1,3 @@
-
 import type { Request, Response } from "express"
 import { ApiResponse } from "../utils/apiResponse"
 import { ApiError } from "../utils/apiError"
@@ -86,7 +85,7 @@ export const registerUser = asyncHandler( async (req: Request, res: Response) =>
                     "User registered successfully",
                     {
                         user: {
-                            id: newUser,
+                            id: newUser.id, // FIX: only return the user id, not the whole user object
                             name: newUser.name,
                             username: newUser.username,
                             email: newUser.email,
@@ -724,8 +723,9 @@ export const getAllProblemsSolvedByUser = asyncHandler(async (req: Request, res:
 
 export const checkAuth = asyncHandler(async(req: Request, res: Response) => {
     try {
+        const data = req.user;
         return res.status(200).json(
-            new ApiResponse(200, true, "User is authenticated")
+            new ApiResponse(200, true, "User is authenticated", data)
         )
     } catch (error) {
         console.error('Error checking authentication:', error);

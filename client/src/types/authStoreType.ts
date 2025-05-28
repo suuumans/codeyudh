@@ -1,4 +1,3 @@
-
 import type { UserType } from "./userType";
 import type { SignUpSchemaType } from "../inputValidations/signUpValidation";
 import type { LoginSchemaType } from "../inputValidations/loginValidation";
@@ -10,6 +9,6 @@ export type AuthStore = {
   isCheckingAuth: boolean;
   checkAuth: () => void;
   signup: (data: SignUpSchemaType) => Promise<void>;
-  login: (data: LoginSchemaType) => Promise<void>;
+  login: (data: LoginSchemaType) => Promise<boolean>;
   logout: () => Promise<void>;
 };

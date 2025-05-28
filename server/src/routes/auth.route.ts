@@ -25,10 +25,10 @@ const router = express.Router();
 router.post('/register', validate(registerUserSchema), registerUser);
 router.post('/login',validate(loginUserSchema), loginUser);
 router.get('/verify', verifyUser);
-router.get('/check', checkAuth);
 
 // ----------- Private routes -----------
 router.use(verifyJWT);
+router.get('/check', checkAuth);
 router.post('/logout', logoutUser);
 router.get('/profile', getUserProfile);
 router.put('/update-profile', updateUserProfile);

@@ -18,7 +18,7 @@ export const verifyJWT = asyncHandler(async (req: Request, _, next: NextFunction
         // verify token
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!)
         if (!decodedToken) {
-            throw new ApiError(401, "Unauthorized request: Invalid token")
+            throw new ApiError(401, "Invalid token type")
         }
 
         // find the user based on decoded token's id

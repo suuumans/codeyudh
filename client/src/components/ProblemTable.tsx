@@ -5,12 +5,20 @@ import { useAuthStore } from '../store/useAuthStore';
 import { Link } from 'react-router-dom';
 import { Bookmark, PencilIcon, Trash, TrashIcon, Plus  } from 'lucide-react';
 import type { AuthStore } from '../types/authStoreType';
+import { usePlaylistStore } from '../store/usePlaylistStore';
+import AddToPlaylistModal from './AddToPlaylist';
+import CreatePlaylistModal, { type PlaylistFormData } from './CreatePlaylistModel';
 
 interface ProblemTableProps {
   problems: Problem[];
+  onDeleteProblem?: (id: string) => void
 }
-const ProblemTable: React.FC<ProblemTableProps> = ({ problems }) => {
+const ProblemTable: React.FC<ProblemTableProps> = ({ problems, onDeleteProblem }) => {
     const { authUser } = useAuthStore() as AuthStore
+    const { createPlaylist } = usePlaylistStore()
+    const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] = useState(false)
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [selectedProblemId, setSelectedProblemId] = useState<string | null>(null);
     const [search, setSearch]  = useState('')
     const [difficulty, setDifficulty] = useState('ALL')
     const [selectedTag, setSelectedTag] = useState('ALL')
@@ -18,14 +26,14 @@ const ProblemTable: React.FC<ProblemTableProps> = ({ problems }) => {
 
     // extract all tags from problems
     const allTags = useMemo((): string[] => {
-    if (!Array.isArray(problems)) return [];
-    
-    const tagsSet = new Set<string>();
-    
-    problems.forEach((problem) => problem.tags?.forEach((tag) => tagsSet.add(tag)));
-    
-    return Array.from(tagsSet);
-}, [problems]);
+      if (!Array.isArray(problems)) return [];
+      
+      const tagsSet = new Set<string>();
+      
+      problems.forEach((problem) => problem.tags?.forEach((tag) => tagsSet.add(tag)));
+      
+      return Array.from(tagsSet);
+    }, [problems]);
 
 
     const filteredProblems = useMemo(() => {
@@ -42,21 +50,34 @@ const ProblemTable: React.FC<ProblemTableProps> = ({ problems }) => {
     }, [filteredProblems, currentPage])
 
     // all difficulties
-    const defficulties: string[] = ["EASY", "MEDIUM", "HARD"]
+    const difficulties: string[] = ["EASY", "MEDIUM", "HARD"]
+
 
     const handleDelete = (id: string) => {
-
+      if (onDeleteProblem) {
+        onDeleteProblem(id);
+      }
     }
 
-    const handleAddToPlaylist = (id: string) => {}
+    const handleAddToPlaylist = (id: string) => {
+      setSelectedProblemId(id);
+      setIsAddToPlaylistModalOpen(true);
+    }
 
-
+    const handleCreatePlaylist = async (playlistData: { name: string; description?: string }) => {
+      await createPlaylist({
+        name: playlistData.name,
+        description: playlistData.description ?? '' // Provide default empty string
+      });
+      setIsCreateModalOpen(false);
+    }
+    
   return (
     // Create Playlist
     <div className='w-full max-w-6xl mx-auto mt-10'>
         <div className='flex justify-between items-center mb-6'>
             <h2 className='text-2xl font-bold'>Problems</h2>
-            <button className='btn btn-primary gap-2' onClick={() => {}}>
+            <button className='btn btn-primary gap-2' onClick={() => setIsCreateModalOpen(true)}>
                 <Plus className='w-4 h-4' />
                 Create Playlist
             </button>
@@ -71,7 +92,7 @@ const ProblemTable: React.FC<ProblemTableProps> = ({ problems }) => {
                 <option value='ALL'>
                     All Difficulties
                 </option>
-                {defficulties.map((difficulty) => (
+                {difficulties.map((difficulty) => (
                     <option key={difficulty} value={difficulty}>
                         {difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase()}
                     </option>
@@ -206,17 +227,20 @@ const ProblemTable: React.FC<ProblemTableProps> = ({ problems }) => {
       </div>
 
       {/* Modals */}
-      {/* <CreatePlaylistModal
+      <CreatePlaylistModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreatePlaylist}
       />
       
-      <AddToPlaylistModal
-        isOpen={isAddToPlaylistModalOpen}
-        onClose={() => setIsAddToPlaylistModalOpen(false)}
-        problemId={selectedProblemId}
-      /> */}
+      {selectedProblemId && (
+        <AddToPlaylistModal
+          isOpen={isAddToPlaylistModalOpen}
+          onClose={() => setIsAddToPlaylistModalOpen(false)}
+          problemId={selectedProblemId}
+        />
+      )}
+
     </div>
   )
 }

@@ -14,7 +14,7 @@ interface Playlist {
 
 interface PlaylistFormData {
   name: string;
-  description: string;
+  description?: string;
 }
 
 interface PlaylistState {
@@ -38,22 +38,29 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
   error: null,
 
   createPlaylist: async (playlistData: PlaylistFormData) => {
+    set({ isLoading: true });
     try {
-      set({ isLoading: true });
       const response = await axiosInstance.post(
         "/playlist/create-playlist",
         playlistData
       );
 
       set((state) => ({
-        playlists: [...state.playlists, response.data.playList],
+        playlists: Array.isArray(state.playlists) 
+        ? [...state.playlists, response.data.playList]
+        : [response.data.playList]
       }));
 
       toast.success("Playlist created successfully");
       return response.data.playList;
     } catch (error: any) {
       console.error("Error creating playlist:", error);
-      toast.error(error.response?.data?.error ?? "Failed to create playlist");
+      if (error.response?.data?.error?.includes("unique constraint") || 
+          error.response?.status === 500) {
+        toast.error("A playlist with this name already exists");
+      } else {
+        toast.error(error.response?.data?.error || "Failed to create playlist");
+      }
       throw error;
     } finally {
       set({ isLoading: false });
@@ -64,9 +71,12 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await axiosInstance.get("/playlist");
-      set({ playlists: response.data.playLists });
+      const playlistData = response.data.data ||  [];
+      // console.log("Playlist API response:", response.data);
+      set({ playlists: playlistData });
     } catch (error) {
       console.error("Error fetching playlists:", error);
+      set({ playlists: [] });
       toast.error("Failed to fetch playlists");
     } finally {
       set({ isLoading: false });

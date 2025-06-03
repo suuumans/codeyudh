@@ -1,3 +1,7 @@
+
+/* Add Google Fonts import */
+@import url('https://fonts.googleapis.com/css2?display=swap&family=Noto+Sans:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700');
+
 @import "tailwindcss";
 @plugin "daisyui";
 

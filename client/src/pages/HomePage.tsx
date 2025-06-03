@@ -8,6 +8,17 @@ const HomePage: React.FC = () => {
 
   const { getAllProblems, problems, isProblemsLoading } = useProblemStore()
 
+
+  // console.log("HomePage rendering with problems:", problems);
+  // console.log("problems type:", typeof problems);
+  // console.log("problems is array:", Array.isArray(problems));
+  // console.log("problems length:", problems?.length);
+
+  useEffect(() => {
+    console.log("Problems state changed:", problems);
+  }, [problems]);
+
+
   useEffect(() => {
     getAllProblems()
   }, [getAllProblems])
@@ -27,7 +38,7 @@ const HomePage: React.FC = () => {
         Welcome to <span className='text-primary'>codeyudh</span>
       </h1>
 
-      <p className='mt-4 text-center text-lg font-semibold text-grey-500 dart:text-grey-400 z-10'>
+      <p className='mt-4 text-center text-lg font-semibold text-gray-500 dark:text-gray-400 z-10'>
         A Platform where coders can engage in "yudh" (war) - battling with code and challenging others.
       </p>
 

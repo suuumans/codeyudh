@@ -23,6 +23,20 @@ export const createPlaylist = asyncHandler(async (req: Request, res: Response) =
     }
 
     try {
+        // Check if playlist with same name already exists for this user
+        const existingPlaylist = await db.select().from(Playlist).where(
+                and(
+                eq(Playlist.userId, userId),
+                eq(Playlist.name, name)
+                )
+            )
+            .limit(1);
+
+        if (existingPlaylist.length > 0) {
+            return res.status(400).json(
+                new ApiResponse(400, false, "A playlist with this name already exists", null)
+            );
+        }
         // create playlist
         const playlist = await db.insert(Playlist).values({
             name,

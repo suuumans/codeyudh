@@ -11,14 +11,14 @@ interface AddToPlaylistProps {
 }
 
 const AddToPlaylistModal: React.FC<AddToPlaylistProps> = ({ isOpen, onClose, problemId }) => {
-  const { playlists, getAllPlaylists, addProblemToPlaylist, isLoading } = usePlaylistStore();
+  const { playlists = [], getAllPlaylists, addProblemToPlaylist, isLoading } = usePlaylistStore();
   const [selectedPlaylist, setSelectedPlaylist] = useState('');
 
   useEffect(() => {
     if (isOpen) {
       getAllPlaylists();
     }
-  }, [isOpen]);
+  }, [isOpen, getAllPlaylists]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,12 +52,18 @@ const AddToPlaylistModal: React.FC<AddToPlaylistProps> = ({ isOpen, onClose, pro
               disabled={isLoading}
             >
               <option value="">Select a playlist</option>
-              {playlists.map((playlist) => (
-                <option key={playlist.id} value={playlist.id}>
-                  {playlist.name}
-                </option>
-              ))}
+              {Array.isArray(playlists) ? (
+                playlists.map((playlist) => (
+                  <option key={playlist.id} value={playlist.id}>
+                    {playlist.name}
+                  </option>
+                ))
+              ) : (
+                <option value="">No playlists available</option>
+              )}
+
             </select>
+
           </div>
 
           <div className="flex justify-end gap-2 mt-6">

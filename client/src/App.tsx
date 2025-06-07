@@ -15,7 +15,7 @@ import { AddProblem } from './pages/AddProblem.tsx'
 import Profile from './pages/Profile.tsx'
 import LandingPage from './pages/LandingPage.tsx'
 import CreateContestPage from './pages/CreateContestPage.tsx'
-import ContestPage from './pages/ContestPage.tsx'
+import ContestPage1 from './pages/ContestPage1.tsx'
 import SheetsPage from './pages/Sheetspage.tsx'
 
 function App() {
@@ -51,7 +51,7 @@ function App() {
           </Route>
           <Route path="/sheets" element={authUser ? <SheetsPage /> : <Navigate to="/login" />} />
           <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
-          <Route path="/contest" element={authUser ? <ContestPage /> : <Navigate to="/login" />} />
+          <Route path="/contest" element={authUser ? <ContestPage1 /> : <Navigate to="/login" />} />
         </Route>
       </Routes>
     </div>

@@ -4,7 +4,7 @@ import { CheckCircle2, XCircle, Clock, MemoryStick as Memory } from 'lucide-reac
 
 
 interface TestCase {
-  id: string | number;
+  id: number;
   passed: boolean;
   input: string;
   output: string;

@@ -1,6 +1,6 @@
-
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Trophy, Users, ChevronRight } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Calendar, Clock, Trophy, Users, ChevronRight, Crown } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface Contest {
   id: string;
@@ -19,6 +19,12 @@ interface ContestsState {
   past: Contest[];
 }
 
+interface ContestRanking {
+  name: string;
+  score: number;
+  rank: number;
+}
+
 const ContestsPage: React.FC = () => {
   const [contests, setContests] = useState<ContestsState>({
     upcoming: [],
@@ -27,6 +33,9 @@ const ContestsPage: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'upcoming' | 'active' | 'past'>('upcoming');
+  const [rankings, setRankings] = useState<ContestRanking[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [leaderboardError, setLeaderboardError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchContests = async () => {
@@ -36,55 +45,45 @@ const ContestsPage: React.FC = () => {
         // const response = await fetch('/api/v1/contests');
         // const data = await response.json();
 
-        // Mock data for demonstration
-        const mockData: ContestsState = {
-          upcoming: [
-            {
-              id: 'c001',
-              title: 'Weekly Coding Battle #12',
-              description: 'Solve algorithmic puzzles and compete for the top spot!',
-              startTime: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
-              duration: 120, // in minutes
-              participants: 0,
-              difficulty: 'Medium',
-            },
-            {
-              id: 'c002',
-              title: 'Data Structures Deep Dive',
-              description: 'Test your knowledge of advanced data structures.',
-              startTime: new Date(Date.now() + 172800000).toISOString(), // Day after tomorrow
-              duration: 180,
-              difficulty: 'Hard',
-            },
-          ],
-          active: [
-            {
-              id: 'c003',
-              title: 'JavaScript Challenge',
-              description: 'Master JavaScript with these tricky problems!',
-              startTime: new Date(Date.now() - 3600000).toISOString(), // Started 1 hour ago
-              duration: 240,
-              participants: 156,
-              difficulty: 'Easy',
-            },
-          ],
-          past: [
-            {
-              id: 'c004',
-              title: 'Algorithm Olympiad',
-              description: 'Our monthly flagship contest featuring the hardest problems.',
-              startTime: new Date(Date.now() - 604800000).toISOString(), // 1 week ago
-              duration: 180,
-              participants: 342,
-              difficulty: 'Hard',
-              winners: ['user123', 'user456', 'user789'],
-            },
-          ],
+        const response = await fetch('/api/v1/contest');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const allContests: Contest[] = await response.json();
+
+        const now = new Date();
+        const categorizedContests: ContestsState = {
+          upcoming: [],
+          active: [],
+          past: [],
         };
-        
-        setContests(mockData);
+
+        allContests.forEach(contest => {
+          const startTimeDate = new Date(contest.startTime);
+          // Ensure duration is a number and positive
+          const durationMinutes = typeof contest.duration === 'number' && contest.duration > 0 ? contest.duration : 0;
+          const endTimeDate = new Date(startTimeDate.getTime() + durationMinutes * 60000); // 60000 ms in a minute
+
+          if (startTimeDate > now) {
+            categorizedContests.upcoming.push(contest);
+          } else if (endTimeDate > now) { // Contest started but not ended
+            categorizedContests.active.push(contest);
+          } else { // Contest ended
+            categorizedContests.past.push(contest);
+          }
+        });
+
+        // Sort contests within each category
+        categorizedContests.upcoming.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+        categorizedContests.active.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+        // Show most recent past contests first
+        categorizedContests.past.sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
+
+        setContests(categorizedContests);
       } catch (error) {
         console.error('Error fetching contests:', error);
+        // Optionally, set an error state here to inform the user
+        setContests({ upcoming: [], active: [], past: [] }); // Reset or keep stale data
       } finally {
         setIsLoading(false);
       }
@@ -92,6 +91,38 @@ const ContestsPage: React.FC = () => {
 
     fetchContests();
   }, []);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      setLeaderboardLoading(true);
+      setLeaderboardError(null);
+      let contestId = null;
+      if (contests.active.length > 0) contestId = contests.active[0].id;
+      else if (contests.past.length > 0) contestId = contests.past[0].id;
+      else if (contests.upcoming.length > 0) contestId = contests.upcoming[0].id;
+      if (!contestId) {
+        setRankings([]);
+        setLeaderboardLoading(false);
+        return;
+      }
+      try {
+        // Replace with your actual API endpoint
+        const res = await fetch(`/api/contests/${contestId}/leaderboard`);
+        if (!res.ok) throw new Error('Failed to fetch leaderboard');
+        const data = await res.json();
+        // Expecting data to be an array of { name, score, rank }
+        setRankings(Array.isArray(data) ? data.slice(0, 10) : []);
+      } catch (err: any) {
+        setLeaderboardError(err.message || 'Error fetching leaderboard');
+        setRankings([]);
+      } finally {
+        setLeaderboardLoading(false);
+      }
+    };
+    fetchLeaderboard();
+    // Only re-run when contests change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contests.active, contests.past, contests.upcoming]);
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -268,6 +299,55 @@ const ContestsPage: React.FC = () => {
             </button>
           </div>
         )}
+
+        <div className="mt-16">
+          <div className="bg-[#181f1b]/80 rounded-2xl shadow-xl border border-[#29382f] p-8 flex flex-col gap-8 backdrop-blur-md">
+            <div className="flex items-center gap-4 mb-6">
+              <Trophy className="w-8 h-8 text-yellow-400" />
+              <h1 className="text-3xl font-bold text-white">Weekly Coding Contest</h1>
+            </div>
+            <div className="mb-8">
+              <p className="text-lg text-white/80 mb-2">Join our weekly contest and compete with the best!</p>
+              <Link to="/home" className="btn btn-primary btn-lg mt-2">Go to Problems</Link>
+            </div>
+            <div className="overflow-x-auto">
+              <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                <Crown className="w-6 h-6 text-yellow-400" />
+                Top 10 Leaderboard
+              </h2>
+              {leaderboardLoading ? (
+                <div className="flex justify-center items-center py-8">
+                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-yellow-400"></div>
+                </div>
+              ) : leaderboardError ? (
+                <div className="text-red-400 py-4">{leaderboardError}</div>
+              ) : (
+                <table className="table w-full text-white rounded-xl overflow-hidden">
+                  <thead>
+                    <tr className="bg-[#232b25]">
+                      <th className="py-3 px-4 text-left">Rank</th>
+                      <th className="py-3 px-4 text-left">Name</th>
+                      <th className="py-3 px-4 text-left">Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rankings.length === 0 ? (
+                      <tr><td colSpan={3} className="text-center text-gray-400 py-6">No leaderboard data yet.</td></tr>
+                    ) : (
+                      rankings.map((user) => (
+                        <tr key={user.rank} className="border-b border-[#29382f] hover:bg-[#232b25]/60 transition">
+                          <td className="py-2 px-4 font-bold text-yellow-400">{user.rank}</td>
+                          <td className="py-2 px-4">{user.name}</td>
+                          <td className="py-2 px-4">{user.score}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

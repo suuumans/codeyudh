@@ -11,8 +11,25 @@
 // axiosInstance.ts
 import axios from 'axios';
 
+// Use environment-aware API configuration
+const getBaseURL = () => {
+  // Check for custom API URL from environment variables
+  const customApiUrl = import.meta.env.VITE_API_URL;
+  if (customApiUrl) {
+    return customApiUrl;
+  }
+  
+  // In development, use localhost with the dev server port
+  if (import.meta.env.MODE === 'development') {
+    return 'http://localhost:5050/api/v1';
+  }
+  
+  // In production, use relative URL so it works with any domain
+  return '/api/v1';
+};
+
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5050/api/v1',
+  baseURL: getBaseURL(),
   withCredentials: true, // Important for cookies
   headers: {
     'Content-Type': 'application/json'

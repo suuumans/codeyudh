@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSubmissionStore } from '../store/useSubmissionStore.ts';
 import { Code, Terminal, Clock, HardDrive, Check, X, ChevronDown, ChevronUp, Filter } from 'lucide-react';
 
-const ProfileSubmission = () => {
+const ProfileSubmission: React.FC = () => {
   const { submissions, getAllSubmissions } = useSubmissionStore()
   const [expandedSubmission, setExpandedSubmission] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
@@ -45,10 +44,10 @@ const ProfileSubmission = () => {
     }
   };
 
-  const filteredSubmissions = submissions.filter(submission => {
+  const filteredSubmissions = Array.isArray(submissions) ? submissions.filter(submission => {
     if (filter === 'all') return true;
     return submission.status === filter;
-  });
+  }) : [];
 
   return (
     <div className="n bg-base-200 p-4 md:p-8">
@@ -73,12 +72,12 @@ const ProfileSubmission = () => {
             <div className="stats shadow bg-base-100">
               <div className="stat p-2">
                 <div className="stat-title">Total</div>
-                <div className="stat-value text-lg">{submissions.length}</div>
+                <div className="stat-value text-lg">{Array.isArray(submissions) ? submissions.length : 0}</div>
               </div>
               <div className="stat p-2">
                 <div className="stat-title">Accepted</div>
                 <div className="stat-value text-lg text-success">
-                  {submissions.filter(s => s.status === 'Accepted').length}
+                  {Array.isArray(submissions) ? submissions.filter(s => s.status === 'Accepted').length : 0}
                 </div>
               </div>
             </div>

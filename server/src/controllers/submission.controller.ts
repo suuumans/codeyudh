@@ -24,7 +24,7 @@ export const getAllSubmissions = asyncHandler(async(req: Request, res: Response)
 
     try {
         // find user with the given id
-        const submission = await db.select().from(Submission).where(eq(Submission.id, userId)).limit(1)
+        const submission = await db.select().from(Submission).where(eq(Submission.userId, userId))
 
         if(!submission || submission.length === 0){
             throw new ApiError(404, "Unauthorized request - User not found!.")

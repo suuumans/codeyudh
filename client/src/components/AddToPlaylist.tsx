@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { X, Plus, Loader } from 'lucide-react';
+import { X } from 'lucide-react';
 import { usePlaylistStore } from '../store/usePlaylistStore';
 
 
@@ -11,7 +10,10 @@ interface AddToPlaylistProps {
 }
 
 const AddToPlaylistModal: React.FC<AddToPlaylistProps> = ({ isOpen, onClose, problemId }) => {
-  const { playlists = [], getAllPlaylists, addProblemToPlaylist, isLoading } = usePlaylistStore();
+  const playlists = usePlaylistStore((state) => state.playlists);
+  const getAllPlaylists = usePlaylistStore((state) => state.getAllPlaylists);
+  const addProblemToPlaylist = usePlaylistStore((state) => state.addProblemToPlaylist);
+  const isLoading = usePlaylistStore((state) => state.isLoading);
   const [selectedPlaylist, setSelectedPlaylist] = useState('');
 
   useEffect(() => {
@@ -24,8 +26,16 @@ const AddToPlaylistModal: React.FC<AddToPlaylistProps> = ({ isOpen, onClose, pro
     e.preventDefault();
     if (!selectedPlaylist) return;
 
-    await addProblemToPlaylist(selectedPlaylist, [problemId]);
-    onClose();
+    try {
+      console.log('Submitting add to playlist:', { selectedPlaylist, problemId });
+      await addProblemToPlaylist(selectedPlaylist, [problemId]);
+      // Optionally refresh all playlists after adding
+      await getAllPlaylists();
+      onClose();
+    } catch (error) {
+      // Don't close modal on error
+      console.error('Failed to add problem to playlist:', error);
+    }
   };
 
   if (!isOpen) return null;
@@ -42,10 +52,11 @@ const AddToPlaylistModal: React.FC<AddToPlaylistProps> = ({ isOpen, onClose, pro
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="form-control">
-            <label className="label">
+            <label className="label" htmlFor="playlist-select">
               <span className="label-text font-medium">Select Playlist</span>
             </label>
             <select
+              id="playlist-select"
               className="select select-bordered w-full"
               value={selectedPlaylist}
               onChange={(e) => setSelectedPlaylist(e.target.value)}
@@ -53,9 +64,9 @@ const AddToPlaylistModal: React.FC<AddToPlaylistProps> = ({ isOpen, onClose, pro
             >
               <option value="">Select a playlist</option>
               {Array.isArray(playlists) ? (
-                playlists.map((playlist) => (
-                  <option key={playlist.id} value={playlist.id}>
-                    {playlist.name}
+                playlists.filter(p => p?.id).map((playlist) => (
+                  <option key={playlist?.id} value={playlist?.id}>
+                    {playlist?.name}
                   </option>
                 ))
               ) : (
@@ -75,7 +86,6 @@ const AddToPlaylistModal: React.FC<AddToPlaylistProps> = ({ isOpen, onClose, pro
               className="btn btn-primary"
               disabled={!selectedPlaylist || isLoading}
             >
-              {isLoading ? <Loader className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
               Add to Playlist
             </button>
           </div>

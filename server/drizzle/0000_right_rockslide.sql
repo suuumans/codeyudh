@@ -1,6 +1,20 @@
 CREATE TYPE "public"."difficulty" AS ENUM('EASY', 'MEDIUM', 'HARD');--> statement-breakpoint
 CREATE TYPE "public"."status" AS ENUM('PENDING', 'APPROVED', 'REJECTED');--> statement-breakpoint
 CREATE TYPE "public"."roles" AS ENUM('ADMIN', 'USER');--> statement-breakpoint
+CREATE TABLE "contests" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"title" text NOT NULL,
+	"description" text,
+	"start_time" timestamp with time zone NOT NULL,
+	"duration" integer NOT NULL,
+	"difficulty" "difficulty" NOT NULL,
+	"participants" json,
+	"problems" json,
+	"winners" json,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "playlists" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
@@ -42,13 +56,12 @@ CREATE TABLE "problems" (
 );
 --> statement-breakpoint
 CREATE TABLE "problem_solved" (
-	"id" uuid DEFAULT gen_random_uuid(),
+	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" uuid NOT NULL,
 	"problem_id" uuid NOT NULL,
 	"submission_id" uuid NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "problem_solved_user_id_problem_id_submission_id_pk" PRIMARY KEY("user_id","problem_id","submission_id"),
 	CONSTRAINT "unique_user_problem" UNIQUE("user_id","problem_id")
 );
 --> statement-breakpoint
@@ -71,7 +84,7 @@ CREATE TABLE "submissions" (
 --> statement-breakpoint
 CREATE TABLE "test_case_results" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"submission_id" varchar NOT NULL,
+	"submission_id" uuid NOT NULL,
 	"test_case" integer NOT NULL,
 	"passed" boolean NOT NULL,
 	"stdout" text NOT NULL,
@@ -110,7 +123,7 @@ CREATE TABLE "user_problems" (
 	"user_id" uuid NOT NULL,
 	"problem_id" uuid NOT NULL,
 	"submission_id" uuid,
-	CONSTRAINT "user_problems_user_id_problem_id_submission_id_pk" PRIMARY KEY("user_id","problem_id","submission_id")
+	CONSTRAINT "user_problems_user_id_problem_id_pk" PRIMARY KEY("user_id","problem_id")
 );
 --> statement-breakpoint
 ALTER TABLE "playlists" ADD CONSTRAINT "playlists_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

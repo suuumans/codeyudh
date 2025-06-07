@@ -1,11 +1,11 @@
 
 import express from "express";
-import { exicuteCode } from "../controllers/exicuteCode.controller.ts";
+import { executeCode } from "../controllers/executeCode.controller.ts";
 import { verifyJWT } from "../middlewares/auth.middleware";
 
 const router = express.Router();
 
 router.use(verifyJWT);
-router.post('/exicute-code', exicuteCode);
+router.post('/:problem_id', executeCode);
 
 export default router

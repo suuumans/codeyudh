@@ -1,4 +1,3 @@
-
 import React from "react";
 import { User, Code, LogOut } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore.ts";
@@ -15,11 +14,18 @@ const Navbar = () => {
       <div className="flex w-full justify-between mx-auto max-w-4xl bg-black/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-gray-200/10 p-4 rounded-2xl">
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 cursor-pointer">
-          <img src="/leetlab.svg" className="h-18 w-18 bg-primary/20 text-primary border-none px-2 py-2 rounded-full" />
+          {/* <img src="/leetlab.svg" className="h-18 w-18 bg-primary/20 text-primary border-none px-2 py-2 rounded-full" /> */}
           <span className="text-lg md:text-2xl font-bold tracking-tight text-white hidden md:block">
           codeyudh
           </span>
         </Link>
+
+        {/* Main Navigation Links */}
+        <div className="flex items-center gap-9">
+          <Link to="/home" className="text-white text-sm font-medium leading-normal">Problems</Link>
+          <Link to="/contest" className="text-white text-sm font-medium leading-normal">Contests</Link>
+          <Link to="/sheets" className="text-white text-sm font-medium leading-normal">Sheets</Link>
+        </div>
 
         {/* User Profile and Dropdown */}
         <div className="flex items-center gap-8">
@@ -63,15 +69,26 @@ const Navbar = () => {
                 </Link>
               </li>
               {authUser?.role === "ADMIN" && (
-                <li>
-                  <Link
-                    to="/add-problem"
-                    className="hover:bg-primary hover:text-white text-base font-semibold"
-                  >
-                    <Code className="w-4 h-4 mr-1" />
-                    Add Problem
-                  </Link>
-                </li>
+                <>
+                  <li>
+                    <Link
+                      to="/add-problem"
+                      className="hover:bg-primary hover:text-white text-base font-semibold"
+                    >
+                      <Code className="w-4 h-4 mr-1" />
+                      Add Problem
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/create-contest"
+                      className="hover:bg-primary hover:text-white text-base font-semibold"
+                    >
+                      <Code className="w-4 h-4 mr-1" />
+                      Create Contest
+                    </Link>
+                  </li>
+                </>
               )}
               <li>
                 <LogoutButton className="hover:bg-primary hover:text-white">

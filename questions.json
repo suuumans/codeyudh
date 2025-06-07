@@ -1,0 +1,499 @@
+
+[
+    {
+        "title": "Add two numbers",
+        "description": "Given two number add them up and solve the problem with memory effieient way.",
+        "difficulty": "EASY",
+        "tags": [ "maths", "operators", "numbers" ],
+        "constraints": "-10^9 <= a, b <= 10^9",
+        "examples": {
+            "PYTHON": {
+                "input": "3 7",
+                "output": "10",
+                "explanation": "Adding 3 and 7 gives 10"
+            },
+            "JAVASCRIPT": {
+                "input": "-5 12",
+                "output": "7",
+                "explanation": "Adding -5 and 12 gives 7"
+            },
+            "JAVA": {
+                "input": "12 5",
+                "output": "17",
+                "explanation": "Adding 12 and 5 gives 17"
+            }
+        },
+        "testcases": [
+            {
+                "input": "100 200",
+                "output": "300"
+            },
+            {
+                "input": "-200 500",
+                "output": "300"
+            },
+            {
+                "input": "-300 -600",
+                "output": "300"
+            },
+            {
+                "input": "0 0",
+                "output": "0"
+            }
+        ],
+        "codeSnippets": {
+            "JAVASCRIPT": "const readline = require('readline');\n\nfunction addTwoNumbers(a, b) {\n    // Write your code here\n    // Return the sum of a and b\n}\n\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\n\nlet inputLines = [];\n\nrl.on('line', (line) => {\n    inputLines = line.split(' ');\n    rl.close();\n}).on('close', () => {\n    const a = parseInt(inputLines[0], 10);\n    const b = parseInt(inputLines[1], 10);\n    console.log(addTwoNumbers(a, b));\n});",
+            "PYTHON": "def add_two_numbers(a, b):\n    # Write your code here\n    # Return the sum of a and b\n    pass\n\nimport sys\ninput_line = sys.stdin.read()\na, b = map(int, input_line.split())\nprint(add_two_numbers(a, b))",
+            "JAVA": "import java.util.Scanner;\n\npublic class Main {\n    public static int addTwoNumbers(int a, int b) {\n        // Write your code here\n        // Return the sum of a and b\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        System.out.println(addTwoNumbers(a, b));\n    }\n}"
+        },
+        "referenceSolution": {
+            "JAVASCRIPT": "const readline = require('readline');\n\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\n\nlet inputLines = [];\n\nrl.on('line', (line) => {\n    inputLines = line.split(' ');\n    rl.close();\n}).on('close', () => {\n    const a = parseInt(inputLines[0], 10);\n    const b = parseInt(inputLines[1], 10);\n    console.log(a + b);\n});",
+            "PYTHON": "import sys\ninput_line = sys.stdin.read()\na, b = map(int, input_line.split())\nprint(a + b)",
+            "JAVA": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        System.out.println(a + b);\n    }\n}"
+        }
+    },
+    {
+        "title": "Merge Sorted Arrays",
+        "description": "Given two sorted integer arrays `nums1` and `nums2`, merge `nums2` into `nums1` as one sorted array. The number of elements initialized in `nums1` and `nums2` are `m` and `n` respectively. You may assume that `nums1` has enough space (size that is greater or equal to `m + n`) to hold additional elements from `nums2`.",
+        "difficulty": "MEDIUM",
+        "tags": [ "arrays", "sorting", "two-pointers" ],
+        "constraints": "0 <= m, n <= 200\n1 <= m + n <= 200\n-10^9 <= nums1[i], nums2[i] <= 10^9",
+        "examples": {
+            "PYTHON": {
+                "input": "nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3",
+                "output": "[1,2,2,3,5,6]",
+                "explanation": "The arrays we are merging are [1,2,3] and [2,5,6]. The result is [1,2,2,3,5,6]."
+            },
+            "JAVASCRIPT": {
+                "input": "nums1 = [4,5,6,0,0,0], m = 3, nums2 = [1,2,3], n = 3",
+                "output": "[1,2,3,4,5,6]",
+                "explanation": "The arrays we are merging are [4,5,6] and [1,2,3]. The result is [1,2,3,4,5,6]."
+            },
+            "JAVA": {
+                "input": "nums1 = [1], m = 1, nums2 = [], n = 0",
+                "output": "[1]",
+                "explanation": "The arrays we are merging are [1] and []. The result is [1]."
+            }
+        },
+        "testcases": [
+            {
+                "input": "nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3",
+                "output": "[1,2,2,3,5,6]"
+            },
+            {
+                "input": "nums1 = [1], m = 1, nums2 = [], n = 0",
+                "output": "[1]"
+            },
+            {
+                "input": "nums1 = [0], m = 0, nums2 = [1], n = 1",
+                "output": "[1]"
+            },
+            {
+                "input": "nums1 = [4,5,6,0,0,0], m = 3, nums2 = [1,2,3], n = 3",
+                "output": "[1,2,3,4,5,6]"
+            }
+        ],
+        "codeSnippets": {
+            "JAVASCRIPT": "/**\n * @param {number[]} nums1\n * @param {number} m\n * @param {number[]} nums2\n * @param {number} n\n * @return {void} Do not return anything, modify nums1 in-place instead.\n */\nvar merge = function(nums1, m, nums2, n) {\n    // Write your code here\n};\n\n// Example usage for testing:\n// const nums1_input = JSON.parse(process.argv[2]);\n// const m_input = parseInt(process.argv[3]);\n// const nums2_input = JSON.parse(process.argv[4]);\n// const n_input = parseInt(process.argv[5]);\n// merge(nums1_input, m_input, nums2_input, n_input);\n// console.log(JSON.stringify(nums1_input));",
+            "PYTHON": "def merge(nums1: list[int], m: int, nums2: list[int], n: int) -> None:\n    # Write your code here\n    pass\n\n# Example usage for testing:\n# import sys\n# input_data = sys.stdin.read().split('\\n')\n# nums1_str = input_data[0]\n# m = int(input_data[1])\n# nums2_str = input_data[2]\n# n = int(input_data[3])\n\n# nums1_list = [int(x) for x in nums1_str.strip('[]').split(',') if x.strip()]\n# nums2_list = [int(x) for x in nums2_str.strip('[]').split(',') if x.strip()]\n\n# merge(nums1_list, m, nums2_list, n)\n# print(nums1_list)",
+            "JAVA": "class Solution {\n    public void merge(int[] nums1, int m, int[] nums2, int n) {\n        // Write your code here\n    }\n}\n\n// Example usage for testing:\n// public class Main {\n//     public static void main(String[] args) {\n//         int[] nums1 = {1,2,3,0,0,0};\n//         int m = 3;\n//         int[] nums2 = {2,5,6};\n//         int n = 3;\n//         new Solution().merge(nums1, m, nums2, n);\n//         for (int num : nums1) {\n//             System.out.print(num + \" \");\n//         }\n//     }\n// }"
+        },
+        "referenceSolution": {
+            "JAVASCRIPT": "/**\n * @param {number[]} nums1\n * @param {number} m\n * @param {number[]} nums2\n * @param {number} n\n * @return {void} Do not return anything, modify nums1 in-place instead.\n */\nvar merge = function(nums1, m, nums2, n) {\n    let p1 = m - 1;\n    let p2 = n - 1;\n    let p = m + n - 1;\n\n    while (p1 >= 0 && p2 >= 0) {\n        if (nums1[p1] > nums2[p2]) {\n            nums1[p] = nums1[p1];\n            p1--;\n        } else {\n            nums1[p] = nums2[p2];\n            p2--;\n        }\n        p--;\n    }\n\n    while (p2 >= 0) {\n        nums1[p] = nums2[p2];\n        p2--;\n        p--;\n    }\n};",
+            "PYTHON": "def merge(nums1: list[int], m: int, nums2: list[int], n: int) -> None:\n    p1 = m - 1\n    p2 = n - 1\n    p = m + n - 1\n\n    while p1 >= 0 and p2 >= 0:\n        if nums1[p1] > nums2[p2]:\n            nums1[p] = nums1[p1]\n            p1 -= 1\n        else:\n            nums1[p] = nums2[p2]\n            p2 -= 1\n        p -= 1\n\n    while p2 >= 0:\n        nums1[p] = nums2[p2]\n        p2 -= 1\n        p -= 1",
+            "JAVA": "class Solution {\n    public void merge(int[] nums1, int m, int[] nums2, int n) {\n        int p1 = m - 1;\n        int p2 = n - 1;\n        int p = m + n - 1;\n\n        while (p1 >= 0 && p2 >= 0) {\n            if (nums1[p1] > nums2[p2]) {\n                nums1[p] = nums1[p1];\n                p1--;\n            } else {\n                nums1[p] = nums2[p2];\n                p2--;\n            }\n            p--;\n        }\n\n        while (p2 >= 0) {\n            nums1[p] = nums2[p2];\n            p2--;\n            p--;\n        }\n    }\n}"
+        }
+    },
+    {
+        "title": "Longest Substring Without Repeating Characters",
+        "description": "Given a string `s`, find the length of the longest substring without repeating characters.",
+        "difficulty": "MEDIUM",
+        "tags": [ "strings", "hash-table", "sliding-window" ],
+        "constraints": "0 <= s.length <= 5 * 10^4\ns consists of English letters, digits, symbols and spaces.",
+        "examples": {
+            "PYTHON": {
+                "input": "\"abcabcbb\"",
+                "output": "3",
+                "explanation": "The answer is \"abc\", with the length of 3."
+            },
+            "JAVASCRIPT": {
+                "input": "\"bbbbb\"",
+                "output": "1",
+                "explanation": "The answer is \"b\", with the length of 1."
+            },
+            "JAVA": {
+                "input": "\"pwwkew\"",
+                "output": "3",
+                "explanation": "The answer is \"wke\", with the length of 3. Notice that the answer must be a substring, \"pwke\" is a subsequence and not a substring."
+            }
+        },
+        "testcases": [
+            {
+                "input": "\"abcabcbb\"",
+                "output": "3"
+            },
+            {
+                "input": "\"bbbbb\"",
+                "output": "1"
+            },
+            {
+                "input": "\"pwwkew\"",
+                "output": "3"
+            },
+            {
+                "input": "\"\"",
+                "output": "0"
+            },
+            {
+                "input": "\"au\"",
+                "output": "2"
+            }
+        ],
+        "codeSnippets": {
+            "JAVASCRIPT": "/**\n * @param {string} s\n * @return {number}\n */\nvar lengthOfLongestSubstring = function(s) {\n    // Write your code here\n};\n\n// Example usage for testing:\n// const s_input = process.argv[2];\n// console.log(lengthOfLongestSubstring(s_input));",
+            "PYTHON": "def lengthOfLongestSubstring(s: str) -> int:\n    # Write your code here\n    pass\n\n# Example usage for testing:\n# import sys\n# s_input = sys.stdin.read().strip()\n# print(lengthOfLongestSubstring(s_input))",
+            "JAVA": "class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        // Write your code here\n        return 0;\n    }\n}\n\n// Example usage for testing:\n// public class Main {\n//     public static void main(String[] args) {\n//         String s = \"abcabcbb\";\n//         System.out.println(new Solution().lengthOfLongestSubstring(s));\n//     }\n// }"
+        },
+        "referenceSolution": {
+            "JAVASCRIPT": "/**\n * @param {string} s\n * @return {number}\n */\nvar lengthOfLongestSubstring = function(s) {\n    let charSet = new Set();\n    let left = 0;\n    let maxLength = 0;\n\n    for (let right = 0; right < s.length; right++) {\n        while (charSet.has(s[right])) {\n            charSet.delete(s[left]);\n            left++;\n        }\n        charSet.add(s[right]);\n        maxLength = Math.max(maxLength, right - left + 1);\n    }\n\n    return maxLength;\n};",
+            "PYTHON": "def lengthOfLongestSubstring(s: str) -> int:\n    char_set = set()\n    left = 0\n    max_length = 0\n\n    for right in range(len(s)):\n        while s[right] in char_set:\n            char_set.remove(s[left])\n            left += 1\n        char_set.add(s[right])\n        max_length = max(max_length, right - left + 1)\n\n    return max_length",
+            "JAVA": "import java.util.HashSet;\nimport java.util.Set;\n\nclass Solution {\n    public int lengthOfLongestSubstring(String s) {\n        Set<Character> charSet = new HashSet<>();\n        int left = 0;\n        int maxLength = 0;\n\n        for (int right = 0; right < s.length(); right++) {\n            while (charSet.contains(s.charAt(right))) {\n                charSet.remove(s.charAt(left));\n                left++;\n            }\n            charSet.add(s.charAt(right));\n            maxLength = Math.max(maxLength, right - left + 1);\n        }\n\n        return maxLength;\n    }\n}"
+        }
+    },
+    {
+        "title": "Rotate Image",
+        "description": "You are given an `n x n` 2D matrix representing an image, rotate the image by 90 degrees (clockwise). You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another 2D matrix and do the rotation.",
+        "difficulty": "MEDIUM",
+        "tags": [ "arrays", "matrix" ],
+        "constraints": "n == matrix.length == matrix[i].length\n1 <= n <= 20\n-1000 <= matrix[i][j] <= 1000",
+        "examples": {
+            "PYTHON": {
+                "input": "matrix = [[1,2,3],[4,5,6],[7,8,9]]",
+                "output": "[[7,4,1],[8,5,2],[9,6,3]]",
+                "explanation": "Rotating the 3x3 matrix clockwise."
+            },
+            "JAVASCRIPT": {
+                "input": "matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,18,16]]",
+                "output": "[[15,13,2,5],[14,3,4,1],[18,6,8,9],[16,7,10,11]]",
+                "explanation": "Rotating the 4x4 matrix clockwise."
+            },
+            "JAVA": {
+                "input": "matrix = [[1]]",
+                "output": "[[1]]",
+                "explanation": "Rotating a 1x1 matrix clockwise."
+            }
+        },
+        "testcases": [
+            {
+                "input": "matrix = [[1,2,3],[4,5,6],[7,8,9]]",
+                "output": "[[7,4,1],[8,5,2],[9,6,3]]"
+            },
+            {
+                "input": "matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,18,16]]",
+                "output": "[[15,13,2,5],[14,3,4,1],[18,6,8,9],[16,7,10,11]]"
+            },
+            {
+                "input": "matrix = [[1]]",
+                "output": "[[1]]"
+            },
+            {
+                "input": "matrix = [[1,2],[3,4]]",
+                "output": "[[3,1],[4,2]]"
+            }
+        ],
+        "codeSnippets": {
+            "JAVASCRIPT": "/**\n * @param {number[][]} matrix\n * @return {void} Do not return anything, modify matrix in-place instead.\n */\nvar rotate = function(matrix) {\n    // Write your code here\n};\n\n// Example usage for testing:\n// const matrix_input = JSON.parse(process.argv[2]);\n// rotate(matrix_input);\n// console.log(JSON.stringify(matrix_input));",
+            "PYTHON": "def rotate(matrix: list[list[int]]) -> None:\n    # Write your code here\n    pass\n\n# Example usage for testing:\n# import sys\n# matrix_str = sys.stdin.read().strip()\n# matrix_list = json.loads(matrix_str)\n# rotate(matrix_list)\n# print(matrix_list)",
+            "JAVA": "class Solution {\n    public void rotate(int[][] matrix) {\n        // Write your code here\n    }\n}\n\n// Example usage for testing:\n// public class Main {\n//     public static void main(String[] args) {\n//         int[][] matrix = {{1,2,3},{4,5,6},{7,8,9}};\n//         new Solution().rotate(matrix);\n//         for (int[] row : matrix) {\n//             for (int val : row) {\n//                 System.out.print(val + \" \");\n//             }\n//             System.out.println();\n//         }\n//     }\n// }"
+        },
+        "referenceSolution": {
+            "JAVASCRIPT": "/**\n * @param {number[][]} matrix\n * @return {void} Do not return anything, modify matrix in-place instead.\n */\nvar rotate = function(matrix) {\n    const n = matrix.length;\n\n    // Transpose the matrix\n    for (let i = 0; i < n; i++) {\n        for (let j = i; j < n; j++) {\n            [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];\n        }\n    }\n\n    // Reverse each row\n    for (let i = 0; i < n; i++) {\n        matrix[i].reverse();\n    }\n};",
+            "PYTHON": "def rotate(matrix: list[list[int]]) -> None:\n    n = len(matrix)\n\n    # Transpose the matrix\n    for i in range(n):\n        for j in range(i, n):\n            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]\n\n    # Reverse each row\n    for i in range(n):\n        matrix[i].reverse()",
+            "JAVA": "class Solution {\n    public void rotate(int[][] matrix) {\n        int n = matrix.length;\n\n        // Transpose the matrix\n        for (int i = 0; i < n; i++) {\n            for (int j = i; j < n; j++) {\n                int temp = matrix[i][j];\n                matrix[i][j] = matrix[j][i];\n                matrix[j][i] = temp;\n            }\n        }\n\n        // Reverse each row\n        for (int i = 0; i < n; i++) {\n            int left = 0;\n            int right = n - 1;\n            while (left < right) {\n                int temp = matrix[i][left];\n                matrix[i][left] = matrix[i][right];\n                matrix[i][right] = temp;\n                left++;\n                right--;\n            }\n        }\n    }\n}"
+        }
+    },
+    {
+        "title": "Coin Change",
+        "description": "You are given an integer array `coins` representing coins of different denominations and an integer `amount` representing a total amount of money. Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.\nYou may assume that you have an infinite number of each kind of coin.",
+        "difficulty": "MEDIUM",
+        "tags": [ "dynamic-programming", "arrays" ],
+        "constraints": "1 <= coins.length <= 12\n1 <= coins[i] <= 2^31 - 1\n0 <= amount <= 10^4",
+        "examples": {
+            "PYTHON": {
+                "input": "coins = [1,2,5], amount = 11",
+                "output": "3",
+                "explanation": "11 = 5 + 5 + 1"
+            },
+            "JAVASCRIPT": {
+                "input": "coins = [2], amount = 3",
+                "output": "-1",
+                "explanation": "3 cannot be formed by coins of denomination 2."
+            },
+            "JAVA": {
+                "input": "coins = [1], amount = 0",
+                "output": "0",
+                "explanation": "Amount is 0, no coins needed."
+            }
+        },
+        "testcases": [
+            {
+                "input": "coins = [1,2,5], amount = 11",
+                "output": "3"
+            },
+            {
+                "input": "coins = [2], amount = 3",
+                "output": "-1"
+            },
+            {
+                "input": "coins = [1], amount = 0",
+                "output": "0"
+            },
+            {
+                "input": "coins = [186,419,83,408], amount = 6249",
+                "output": "20"
+            },
+            {
+                "input": "coins = [1,2,3,4,5], amount = 100",
+                "output": "20"
+            }
+        ],
+        "codeSnippets": {
+            "JAVASCRIPT": "/**\n * @param {number[]} coins\n * @param {number} amount\n * @return {number}\n */\nvar coinChange = function(coins, amount) {\n    // Write your code here\n};\n\n// Example usage for testing:\n// const coins_input = JSON.parse(process.argv[2]);\n// const amount_input = parseInt(process.argv[3]);\n// console.log(coinChange(coins_input, amount_input));",
+            "PYTHON": "def coinChange(coins: list[int], amount: int) -> int:\n    # Write your code here\n    pass\n\n# Example usage for testing:\n# import sys\n# input_data = sys.stdin.read().split('\\n')\n# coins_str = input_data[0]\n# amount = int(input_data[1])\n# coins_list = [int(x) for x in coins_str.strip('[]').split(',') if x.strip()]\n# print(coinChange(coins_list, amount))",
+            "JAVA": "import java.util.Arrays;\n\nclass Solution {\n    public int coinChange(int[] coins, int amount) {\n        // Write your code here\n        return 0;\n    }\n}\n\n// Example usage for testing:\n// public class Main {\n//     public static void main(String[] args) {\n//         int[] coins = {1,2,5};\n//         int amount = 11;\n//         System.out.println(new Solution().coinChange(coins, amount));\n//     }\n// }"
+        },
+        "referenceSolution": {
+            "JAVASCRIPT": "/**\n * @param {number[]} coins\n * @param {number} amount\n * @return {number}\n */\nvar coinChange = function(coins, amount) {\n    const dp = new Array(amount + 1).fill(Infinity);\n    dp[0] = 0;\n\n    for (let i = 1; i <= amount; i++) {\n        for (let coin of coins) {\n            if (coin <= i) {\n                dp[i] = Math.min(dp[i], dp[i - coin] + 1);\n            }\n        }\n    }\n\n    return dp[amount] === Infinity ? -1 : dp[amount];\n};",
+            "PYTHON": "def coinChange(coins: list[int], amount: int) -> int:\n    dp = [float('inf')] * (amount + 1)\n    dp[0] = 0\n\n    for i in range(1, amount + 1):\n        for coin in coins:\n            if coin <= i:\n                dp[i] = min(dp[i], dp[i - coin] + 1)\n\n    return dp[amount] if dp[amount] != float('inf') else -1",
+            "JAVA": "import java.util.Arrays;\n\nclass Solution {\n    public int coinChange(int[] coins, int amount) {\n        int[] dp = new int[amount + 1];\n        Arrays.fill(dp, amount + 1); // Initialize with a value larger than any possible amount\n        dp[0] = 0;\n\n        for (int i = 1; i <= amount; i++) {\n            for (int coin : coins) {\n                if (coin <= i) {\n                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);\n                }\n            }\n        }\n\n        return dp[amount] > amount ? -1 : dp[amount];\n    }\n}"
+        }
+    },
+    {
+        "title": "Word Break",
+        "description": "Given a string `s` and a dictionary of strings `wordDict`, return `true` if `s` can be segmented into a space-separated sequence of one or more dictionary words. Note that the same word in the dictionary may be reused multiple times in the segmentation.",
+        "difficulty": "MEDIUM",
+        "tags": [ "dynamic-programming", "hash-table", "string" ],
+        "constraints": "1 <= s.length <= 20\n1 <= wordDict.length <= 1000\n1 <= wordDict[i].length <= 20\ns and wordDict[i] consist of only lowercase English letters.\nAll the strings of wordDict are unique.",
+        "examples": {
+            "PYTHON": {
+                "input": "s = \"leetcode\", wordDict = [\"leet\",\"code\"]",
+                "output": "true",
+                "explanation": "Return true because \"leetcode\" can be segmented as \"leet code\"."
+            },
+            "JAVASCRIPT": {
+                "input": "s = \"applepenapple\", wordDict = [\"apple\",\"pen\"]",
+                "output": "true",
+                "explanation": "Return true because \"applepenapple\" can be segmented as \"apple pen apple\". Note that you are allowed to reuse a dictionary word."
+            },
+            "JAVA": {
+                "input": "s = \"catsandog\", wordDict = [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]",
+                "output": "false",
+                "explanation": "Cannot be segmented into dictionary words."
+            }
+        },
+        "testcases": [
+            {
+                "input": "s = \"leetcode\", wordDict = [\"leet\",\"code\"]",
+                "output": "true"
+            },
+            {
+                "input": "s = \"applepenapple\", wordDict = [\"apple\",\"pen\"]",
+                "output": "true"
+            },
+            {
+                "input": "s = \"catsandog\", wordDict = [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]",
+                "output": "false"
+            },
+            {
+                "input": "s = \"aaaaaaa\", wordDict = [\"aaaa\",\"aaa\"]",
+                "output": "true"
+            },
+            {
+                "input": "s = \"cars\", wordDict = [\"car\",\"rs\"]",
+                "output": "true"
+            }
+        ],
+        "codeSnippets": {
+            "JAVASCRIPT": "/**\n * @param {string} s\n * @param {string[]} wordDict\n * @return {boolean}\n */\nvar wordBreak = function(s, wordDict) {\n    // Write your code here\n};\n\n// Example usage for testing:\n// const s_input = process.argv[2];\n// const wordDict_input = JSON.parse(process.argv[3]);\n// console.log(wordBreak(s_input, wordDict_input));",
+            "PYTHON": "def wordBreak(s: str, wordDict: list[str]) -> bool:\n    # Write your code here\n    pass\n\n# Example usage for testing:\n# import sys\n# import json\n# input_data = sys.stdin.read().split('\\n')\n# s = input_data[0].strip()\n# word_dict = json.loads(input_data[1])\n# print(wordBreak(s, word_dict))",
+            "JAVA": "import java.util.List;\nimport java.util.Set;\nimport java.util.HashSet;\n\nclass Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        // Write your code here\n        return false;\n    }\n}\n\n// Example usage for testing:\n// public class Main {\n//     public static void main(String[] args) {\n//         String s = \"leetcode\";\n//         List<String> wordDict = Arrays.asList(\"leet\", \"code\");\n//         System.out.println(new Solution().wordBreak(s, wordDict));\n//     }\n// }"
+        },
+        "referenceSolution": {
+            "JAVASCRIPT": "/**\n * @param {string} s\n * @param {string[]} wordDict\n * @return {boolean}\n */\nvar wordBreak = function(s, wordDict) {\n    const n = s.length;\n    const dp = new Array(n + 1).fill(false);\n    dp[0] = true;\n    const wordSet = new Set(wordDict);\n\n    for (let i = 1; i <= n; i++) {\n        for (let j = 0; j < i; j++) {\n            if (dp[j] && wordSet.has(s.substring(j, i))) {\n                dp[i] = true;\n                break;\n            }\n        }\n    }\n    return dp[n];\n};",
+            "PYTHON": "def wordBreak(s: str, wordDict: list[str]) -> bool:\n    n = len(s)\n    dp = [False] * (n + 1)\n    dp[0] = True\n    word_set = set(wordDict)\n\n    for i in range(1, n + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in word_set:\n                dp[i] = True\n                break\n    return dp[n]",
+            "JAVA": "import java.util.List;\nimport java.util.Set;\nimport java.util.HashSet;\n\nclass Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        int n = s.length();\n        boolean[] dp = new boolean[n + 1];\n        dp[0] = true;\n        Set<String> wordSet = new HashSet<>(wordDict);\n\n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                if (dp[j] && wordSet.contains(s.substring(j, i))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n        return dp[n];\n    }\n}"
+        }
+    },
+    {
+        "title": "Trapping Rain Water",
+        "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+        "difficulty": "HARD",
+        "tags": [ "arrays", "two-pointers", "dynamic-programming", "stack" ],
+        "constraints": "n == height.length\n1 <= n <= 2 * 10^4\n0 <= height[i] <= 10^5",
+        "examples": {
+            "PYTHON": {
+                "input": "height = [0,1,0,2,1,0,1,3,2,1,2,1]",
+                "output": "6",
+                "explanation": "The above elevation map (black section) is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In this case, 6 units of rain water (blue section) are being trapped."
+            },
+            "JAVASCRIPT": {
+                "input": "height = [4,2,0,3,2,5]",
+                "output": "9",
+                "explanation": "An explanation of 9 units of water trapped."
+            },
+            "JAVA": {
+                "input": "height = [0,1,0,2,1,0,1,3,2,1,2,1]",
+                "output": "6",
+                "explanation": "Same as Python example."
+            }
+        },
+        "testcases": [
+            {
+                "input": "height = [0,1,0,2,1,0,1,3,2,1,2,1]",
+                "output": "6"
+            },
+            {
+                "input": "height = [4,2,0,3,2,5]",
+                "output": "9"
+            },
+            {
+                "input": "height = [1,2,3,4,5]",
+                "output": "0"
+            },
+            {
+                "input": "height = [5,4,3,2,1]",
+                "output": "0"
+            },
+            {
+                "input": "height = [2,0,2]",
+                "output": "2"
+            }
+        ],
+        "codeSnippets": {
+            "JAVASCRIPT": "/**\n * @param {number[]} height\n * @return {number}\n */\nvar trap = function(height) {\n    // Write your code here\n};\n\n// Example usage for testing:\n// const height_input = JSON.parse(process.argv[2]);\n// console.log(trap(height_input));",
+            "PYTHON": "def trap(height: list[int]) -> int:\n    # Write your code here\n    pass\n\n# Example usage for testing:\n# import sys\n# import json\n# height_str = sys.stdin.read().strip()\n# height_list = json.loads(height_str)\n# print(trap(height_list))",
+            "JAVA": "class Solution {\n    public int trap(int[] height) {\n        // Write your code here\n        return 0;\n    }\n}\n\n// Example usage for testing:\n// public class Main {\n//     public static void main(String[] args) {\n//         int[] height = {0,1,0,2,1,0,1,3,2,1,2,1};\n//         System.out.println(new Solution().trap(height));\n//     }\n// }"
+        },
+        "referenceSolution": {
+            "JAVASCRIPT": "/**\n * @param {number[]} height\n * @return {number}\n */\nvar trap = function(height) {\n    let left = 0;\n    let right = height.length - 1;\n    let leftMax = 0;\n    let rightMax = 0;\n    let trappedWater = 0;\n\n    while (left < right) {\n        if (height[left] < height[right]) {\n            if (height[left] >= leftMax) {\n                leftMax = height[left];\n            } else {\n                trappedWater += leftMax - height[left];\n            }\n            left++;\n        } else {\n            if (height[right] >= rightMax) {\n                rightMax = height[right];\n            } else {\n                trappedWater += rightMax - height[right];\n            }\n            right--;\n        }\n    }\n    return trappedWater;\n};",
+            "PYTHON": "def trap(height: list[int]) -> int:\n    if not height:\n        return 0\n\n    left = 0\n    right = len(height) - 1\n    left_max = 0\n    right_max = 0\n    trapped_water = 0\n\n    while left < right:\n        if height[left] < height[right]:\n            if height[left] >= left_max:\n                left_max = height[left]\n            else:\n                trapped_water += left_max - height[left]\n            left += 1\n        else:\n            if height[right] >= right_max:\n                right_max = height[right]\n            else:\n                trapped_water += right_max - height[right]\n            right -= 1\n\n    return trapped_water",
+            "JAVA": "class Solution {\n    public int trap(int[] height) {\n        if (height == null || height.length == 0) {\n            return 0;\n        }\n\n        int left = 0;\n        int right = height.length - 1;\n        int leftMax = 0;\n        int rightMax = 0;\n        int trappedWater = 0;\n\n        while (left < right) {\n            if (height[left] < height[right]) {\n                if (height[left] >= leftMax) {\n                    leftMax = height[left];\n                } else {\n                    trappedWater += leftMax - height[left];\n                }\n                left++;\n            } else {\n                if (height[right] >= rightMax) {\n                    rightMax = height[right];\n                } else {\n                    trappedWater += rightMax - height[right];\n                }\n                right--;\n            }\n        }\n        return trappedWater;\n    }\n}"
+        }
+    },
+    {
+        "title": "Median of Two Sorted Arrays",
+        "description": "Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, return the median of the two sorted arrays.\nThe overall run time complexity should be $O(log(m+n))$.",
+        "difficulty": "HARD",
+        "tags": [ "arrays", "binary-search", "divide-and-conquer" ],
+        "constraints": "nums1.length == m\nnums2.length == n\n0 <= m <= 1000\n0 <= n <= 1000\n1 <= m + n <= 2000\n-10^6 <= nums1[i], nums2[i] <= 10^6",
+        "examples": {
+            "PYTHON": {
+                "input": "nums1 = [1,3], nums2 = [2]",
+                "output": "2.0",
+                "explanation": "merged array = [1,2,3] and median is 2."
+            },
+            "JAVASCRIPT": {
+                "input": "nums1 = [1,2], nums2 = [3,4]",
+                "output": "2.5",
+                "explanation": "merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5."
+            },
+            "JAVA": {
+                "input": "nums1 = [0,0], nums2 = [0,0]",
+                "output": "0.0",
+                "explanation": "merged array = [0,0,0,0] and median is (0 + 0) / 2 = 0.0."
+            }
+        },
+        "testcases": [
+            {
+                "input": "nums1 = [1,3], nums2 = [2]",
+                "output": "2.0"
+            },
+            {
+                "input": "nums1 = [1,2], nums2 = [3,4]",
+                "output": "2.5"
+            },
+            {
+                "input": "nums1 = [0,0], nums2 = [0,0]",
+                "output": "0.0"
+            },
+            {
+                "input": "nums1 = [], nums2 = [1]",
+                "output": "1.0"
+            },
+            {
+                "input": "nums1 = [2], nums2 = []",
+                "output": "2.0"
+            }
+        ],
+        "codeSnippets": {
+            "JAVASCRIPT": "/**
+             * @param {number[]} nums1
+             * @param {number[]} nums2
+             * @return {number}
+             */\nvar findMedianSortedArrays = function(nums1, nums2) {\n    // Write your code here\n};\n\n// Example usage for testing:\n// const nums1_input = JSON.parse(process.argv[2]);\n// const nums2_input = JSON.parse(process.argv[3]);\n// console.log(findMedianSortedArrays(nums1_input, nums2_input));",
+            "PYTHON": "def findMedianSortedArrays(nums1: list[int], nums2: list[int]) -> float:\n    # Write your code here\n    pass\n\n# Example usage for testing:\n# import sys\n# import json\n# input_data = sys.stdin.read().split('\\n')\n# nums1 = json.loads(input_data[0])\n# nums2 = json.loads(input_data[1])\n# print(findMedianSortedArrays(nums1, nums2))",
+            "JAVA": "class Solution {\n    public double findMedianSortedArrays(int[] nums1, int[] nums2) {\n        // Write your code here\n        return 0.0;\n    }\n}\n\n// Example usage for testing:\n// public class Main {\n//     public static void main(String[] args) {\n//         int[] nums1 = {1,3};\n//         int[] nums2 = {2};\n//         System.out.println(new Solution().findMedianSortedArrays(nums1, nums2));\n//     }\n// }"
+        },
+        "referenceSolution": {
+            "JAVASCRIPT": "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @return {number}\n */\nvar findMedianSortedArrays = function(nums1, nums2) {\n    const m = nums1.length;\n    const n = nums2.length;\n\n    if (m > n) {\n        return findMedianSortedArrays(nums2, nums1); // Ensure nums1 is the smaller array\n    }\n\n    let low = 0;\n    let high = m;\n    const halfLen = Math.floor((m + n + 1) / 2);\n\n    while (low <= high) {\n        const i = Math.floor((low + high) / 2); // Partition point for nums1\n        const j = halfLen - i; // Partition point for nums2\n\n        const maxLeftX = (i === 0) ? -Infinity : nums1[i - 1];\n        const minRightX = (i === m) ? Infinity : nums1[i];\n\n        const maxLeftY = (j === 0) ? -Infinity : nums2[j - 1];\n        const minRightY = (j === n) ? Infinity : nums2[j];\n\n        if (maxLeftX <= minRightY && maxLeftY <= minRightX) {\n            // Found the partition\n            if ((m + n) % 2 === 0) {\n                return (Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2;\n            } else {\n                return Math.max(maxLeftX, maxLeftY);\n            }\n        } else if (maxLeftX > minRightY) {\n            high = i - 1;\n        } else {\n            low = i + 1;\n        }\n    }\n};",
+            "PYTHON": "def findMedianSortedArrays(nums1: list[int], nums2: list[int]) -> float:\n    m = len(nums1)\n    n = len(nums2)\n\n    if m > n:\n        nums1, nums2, m, n = nums2, nums1, n, m # Ensure nums1 is the smaller array\n\n    low = 0\n    high = m\n    half_len = (m + n + 1) // 2\n\n    while low <= high:\n        i = (low + high) // 2  # Partition point for nums1\n        j = half_len - i       # Partition point for nums2\n\n        max_left_x = float('-inf') if i == 0 else nums1[i - 1]\n        min_right_x = float('inf') if i == m else nums1[i]\n\n        max_left_y = float('-inf') if j == 0 else nums2[j - 1]\n        min_right_y = float('inf') if j == n else nums2[j]\n\n        if max_left_x <= min_right_y and max_left_y <= min_right_x:\n            # Found the partition\n            if (m + n) % 2 == 0:\n                return (max(max_left_x, max_left_y) + min(min_right_x, min_right_y)) / 2\n            else:\n                return float(max(max_left_x, max_left_y))\n        elif max_left_x > min_right_y:\n            high = i - 1\n        else:\n            low = i + 1\n\n    return 0.0 # Should not reach here if inputs are valid",
+            "JAVA": "class Solution {\n    public double findMedianSortedArrays(int[] nums1, int[] nums2) {\n        int m = nums1.length;\n        int n = nums2.length;\n\n        if (m > n) {\n            return findMedianSortedArrays(nums2, nums1); // Ensure nums1 is the smaller array\n        }\n\n        int low = 0;\n        int high = m;\n        int halfLen = (m + n + 1) / 2;\n\n        while (low <= high) {\n            int i = low + (high - low) / 2; // Partition point for nums1\n            int j = halfLen - i; // Partition point for nums2\n\n            int maxLeftX = (i == 0) ? Integer.MIN_VALUE : nums1[i - 1];\n            int minRightX = (i == m) ? Integer.MAX_VALUE : nums1[i];\n\n            int maxLeftY = (j == 0) ? Integer.MIN_VALUE : nums2[j - 1];\n            int minRightY = (j == n) ? Integer.MAX_VALUE : nums2[j];\n\n            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {\n                // Found the partition\n                if ((m + n) % 2 == 0) {\n                    return (double)(Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2.0;\n                } else {\n                    return (double)Math.max(maxLeftX, maxLeftY);\n                }\n            } else if (maxLeftX > minRightY) {\n                high = i - 1;\n            } else {\n                low = i + 1;\n            }\n        }\n\n        throw new IllegalArgumentException(\"Input arrays are not sorted or invalid.\");\n    }\n}"
+        }
+    },
+    {
+        "title": "Serialize and Deserialize Binary Tree",
+        "description": "Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.\nDesign an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.",
+        "difficulty": "HARD",
+        "tags": [ "tree", "design", "depth-first-search", "breadth-first-search" ],
+        "constraints": "The number of nodes in the tree is in the range [0, 10^4].\n-1000 <= Node.val <= 1000",
+        "examples": {
+            "PYTHON": {
+                "input": "[1,2,3,null,null,4,5]",
+                "output": "[1,2,3,null,null,4,5]",
+                "explanation": "The tree [1,2,3,null,null,4,5] is serialized to a string and then deserialized back to the original tree. The output represents the structure of the deserialized tree."
+            },
+            "JAVASCRIPT": {
+                "input": "[]",
+                "output": "[]",
+                "explanation": "An empty tree."
+            },
+            "JAVA": {
+                "input": "[1,2,3,null,null,4,5]",
+                "output": "[1,2,3,null,null,4,5]",
+                "explanation": "Same as Python example."
+            }
+        },
+        "testcases": [
+            {
+                "input": "[1,2,3,null,null,4,5]",
+                "output": "[1,2,3,null,null,4,5]"
+            },
+            {
+                "input": "[]",
+                "output": "[]"
+            },
+            {
+                "input": "[1]",
+                "output": "[1]"
+            },
+            {
+                "input": "[1,2]",
+                "output": "[1,2,null,null,null]"
+            },
+            {
+                "input": "[1,null,2]",
+                "output": "[1,null,2,null,null]"
+            }
+        ],
+        "codeSnippets": {
+            "JAVASCRIPT": "/**\n * Definition for a binary tree node.\n * function TreeNode(val) {\n * this.val = val;\n * this.left = this.right = null;\n * }\n */\n\n/**\n * Encodes a tree to a single string.\n *\n * @param {TreeNode} root\n * @return {string}\n */\nvar serialize = function(root) {\n    // Write your code here\n};\n\n/**\n * Decodes your encoded data to tree.\n *\n * @param {string} data\n * @return {TreeNode}\n */\nvar deserialize = function(data) {\n    // Write your code here\n};\n\n/**\n * Your Codec object will be instantiated and called as such:\n * var ser = new Codec();\n * var deser = new Codec();\n * var tree = ser.serialize(root);\n * var ans = deser.deserialize(tree);\n * return ans;\n */\n\n// Helper for TreeNode (for local testing, assume it's provided in execution environment)\n// function TreeNode(val) {\n//     this.val = val;\n//     this.left = this.right = null;\n// }\n\n// Example usage for testing:\n// const buildTree = (arr) => {\n//     if (!arr || arr.length === 0 || arr[0] === null) return null;\n//     const root = new TreeNode(arr[0]);\n//     const queue = [root];\n//     let i = 1;\n//     while (queue.length > 0 && i < arr.length) {\n//         const current = queue.shift();\n//         if (arr[i] !== null) {\n//             current.left = new TreeNode(arr[i]);\n//             queue.push(current.left);\n//         }\n//         i++;\n//         if (i < arr.length && arr[i] !== null) {\n//             current.right = new TreeNode(arr[i]);\n//             queue.push(current.right);\n//         }\n//         i++;\n//     }\n//     return root;\n// };\n\n// const serializeTreeToArray = (root) => {\n//     if (!root) return [];\n//     const result = [];\n//     const queue = [root];\n//     let head = 0;\n//     while (head < queue.length) {\n//         const node = queue[head++];\n//         if (node) {\n//             result.push(node.val);\n//             queue.push(node.left);\n//             queue.push(node.right);\n//         } else {\n//             result.push(null);\n//         }\n//     }\n//     // Trim trailing nulls to match LeetCode's array representation\n//     while (result.length > 0 && result[result.length - 1] === null) {\n//         result.pop();\n//     }\n//     return result;\n// };\n\n// const input_arr = JSON.parse(process.argv[2]);\n// const root_input = buildTree(input_arr);\n// var ser = new Codec();\n// var deser = new Codec();\n// var tree = ser.serialize(root_input);\n// var ans = deser.deserialize(tree);\n// console.log(JSON.stringify(serializeTreeToArray(ans)));",
+            "PYTHON": "# Definition for a binary tree node.\n# class TreeNode(object):\n#     def __init__(self, x):\n#         self.val = x\n#         self.left = None\n#         self.right = None\n\nclass Codec:\n\n    def serialize(self, root):\n        # Write your code here\n        pass\n\n    def deserialize(self, data):\n        # Write your code here\n        pass\n\n# Your Codec object will be instantiated and called as such:\n# ser = Codec()\n# deser = Codec()\n# ans = deser.deserialize(ser.serialize(root))\n\n# Helper for TreeNode (for local testing, assume it's provided in execution environment)\n# class TreeNode(object):\n#     def __init__(self, x):\n#         self.val = x\n#         self.left = None\n#         self.right = None\n\n# def build_tree_from_list(arr):\n#     if not arr or arr[0] is None: return None\n#     root = TreeNode(arr[0])\n#     queue = [root]\n#     i = 1\n#     while queue and i < len(arr):\n#         current = queue.pop(0)\n#         if arr[i] is not None:\n#             current.left = TreeNode(arr[i])\n#             queue.append(current.left)\n#         i += 1\n#         if i < len(arr) and arr[i] is not None:\n#             current.right = TreeNode(arr[i])\n#             queue.append(current.right)\n#         i += 1\n#     return root\n\n# def serialize_tree_to_list(root):\n#     if not root: return []\n#     result = []\n#     queue = [root]\n#     while queue:\n#         node = queue.pop(0)\n#         if node:\n#             result.append(node.val)\n#             queue.append(node.left)\n#             queue.append(node.right)\n#         else:\n#             result.append(None)\n#     while result and result[-1] is None:\n#         result.pop()\n#     return result\n\n# import sys\n# import json\n# input_arr = json.loads(sys.stdin.read())\n# root_input = build_tree_from_list(input_arr)\n# ser = Codec()\n# deser = Codec()\n# tree_serialized = ser.serialize(root_input)\n# ans_tree = deser.deserialize(tree_serialized)\n# print(json.dumps(serialize_tree_to_list(ans_tree)))",
+            "JAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n * int val;\n * TreeNode left;\n * TreeNode right;\n * TreeNode(int x) { val = x; }\n * }\n */\npublic class Codec {\n\n    // Encodes a tree to a single string.\n    public String serialize(TreeNode root) {\n        // Write your code here\n        return \"\";\n    }\n\n    // Decodes your encoded data to tree.\n    public TreeNode deserialize(String data) {\n        // Write your code here\n        return null;\n    }\n}\n\n// Your Codec object will be instantiated and called as such:\n// Codec ser = new Codec();\n// Codec deser = new Codec();\n// TreeNode ans = deser.deserialize(ser.serialize(root));\n\n// Helper for TreeNode (for local testing, assume it's provided in execution environment)\n// class TreeNode {\n//     int val;\n//     TreeNode left;\n//     TreeNode right;\n//     TreeNode(int x) { val = x; }\n// }\n\n// Helper for building tree from array and serializing tree to array (for local testing)\n// import java.util.LinkedList;\n// import java.util.Queue;\n// import java.util.Arrays;\n\n// public class Main {\n//     public static TreeNode buildTreeFromArray(Integer[] arr) {\n//         if (arr == null || arr.length == 0 || arr[0] == null) {\n//             return null;\n//         }\n//         TreeNode root = new TreeNode(arr[0]);\n//         Queue<TreeNode> queue = new LinkedList<>();\n//         queue.offer(root);\n//         int i = 1;\n//         while (!queue.isEmpty() && i < arr.length) {\n//             TreeNode current = queue.poll();\n//             if (arr[i] != null) {\n//                 current.left = new TreeNode(arr[i]);\n//                 queue.offer(current.left);\n//             }\n//             i++;\n//             if (i < arr.length && arr[i] != null) {\n//                 current.right = new TreeNode(arr[i]);\n//                 queue.offer(current.right);\n//             }\n//             i++;\n//         }\n//         return root;\n//     }\n\n//     public static String serializeTreeToArrayString(TreeNode root) {\n//         if (root == null) return \"[]\";\n//         Queue<TreeNode> queue = new LinkedList<>();\n//         queue.offer(root);\n//         StringBuilder sb = new StringBuilder();\n//         sb.append(\"[\");\n//         while (!queue.isEmpty()) {\n//             TreeNode node = queue.poll();\n//             if (node != null) {\n//                 sb.append(node.val).append(\",\");\n//                 queue.offer(node.left);\n//                 queue.offer(node.right);\n//             } else {\n//                 sb.append(\"null,\");\n//             }\n//         }\n//         // Trim trailing nulls\n//         String result = sb.toString();\n//         while (result.endsWith(\"null,\")) {\n//             result = result.substring(0, result.length() - 5);\n//         }\n//         if (result.endsWith(\",\")) {\n//             result = result.substring(0, result.length() - 1);\n//         }\n//         result += \"]\";\n//         return result;\n//     }\n\n//     public static void main(String[] args) {\n//         Integer[] arr = {1,2,3,null,null,4,5};\n//         TreeNode root_input = buildTreeFromArray(arr);\n//         Codec ser = new Codec();\n//         Codec deser = new Codec();\n//         String tree_serialized = ser.serialize(root_input);\n//         TreeNode ans_tree = deser.deserialize(tree_serialized);\n//         System.out.println(serializeTreeToArrayString(ans_tree));\n//     }\n// }"
+        },
+        "referenceSolution": {
+            "JAVASCRIPT": "/**\n * Definition for a binary tree node.\n * function TreeNode(val) {\n * this.val = val;\n * this.left = this.right = null;\n * }\n */\n\n/**\n * Encodes a tree to a single string.\n *\n * @param {TreeNode} root\n * @return {string}\n */\nvar serialize = function(root) {\n    if (!root) return \"#\"; // Using '#' to denote null\n\n    let result = [];\n    let queue = [root];\n\n    while (queue.length > 0) {\n        let node = queue.shift();\n        if (node) {\n            result.push(node.val);\n            queue.push(node.left);\n            queue.push(node.right);\n        } else {\n            result.push(\"#\");\n        }\n    }\n    return result.join(',');\n};\n\n/**\n * Decodes your encoded data to tree.\n *\n * @param {string} data\n * @return {TreeNode}\n */\nvar deserialize = function(data) {\n    if (data === \"#\") return null;\n\n    const nodes = data.split(',');\n    let i = 0;\n    const root = new TreeNode(parseInt(nodes[i++]));\n    let queue = [root];\n\n    while (queue.length > 0) {\n        let current = queue.shift();\n\n        if (nodes[i] !== \"#\") {\n            current.left = new TreeNode(parseInt(nodes[i]));\n            queue.push(current.left);\n        }\n        i++;\n\n        if (nodes[i] !== \"#\") {\n            current.right = new TreeNode(parseInt(nodes[i]));\n            queue.push(current.right);\n        }\n        i++;\n    }\n    return root;\n};\n",
+            "PYTHON": "# Definition for a binary tree node.\n# class TreeNode(object):\n#     def __init__(self, x):\n#         self.val = x\n#         self.left = None\n#         self.right = None\n\nclass Codec:\n\n    def serialize(self, root):\n        \"\"\"\n        Encodes a tree to a single string.\n\n        :type root: TreeNode\n        :rtype: str\n        \"\"\"\n        if not root:\n            return \"#\"\n        \n        queue = collections.deque([root])\n        result = []\n\n        while queue:\n            node = queue.popleft()\n            if node:\n                result.append(str(node.val))\n                queue.append(node.left)\n                queue.append(node.right)\n            else:\n                result.append(\"#\")\n        \n        return \",\".join(result)\n\n    def deserialize(self, data):\n        \"\"\"\n        Decodes your encoded data to tree.\n\n        :type data: str\n        :rtype: TreeNode\n        \"\"\"\n        if data == \"#\":\n            return None\n        \n        nodes = data.split(',')\n        i = 0\n        root = TreeNode(int(nodes[i]))\n        i += 1\n        queue = collections.deque([root])\n\n        while queue:\n            current = queue.popleft()\n\n            if nodes[i] != \"#\":\n                current.left = TreeNode(int(nodes[i]))\n                queue.append(current.left)\n            i += 1\n\n            if nodes[i] != \"#\":\n                current.right = TreeNode(int(nodes[i]))\n                queue.append(current.right)\n            i += 1\n        \n        return root",
+            "JAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n * int val;\n * TreeNode left;\n * TreeNode right;\n * TreeNode(int x) { val = x; }\n * }\n */\nimport java.util.LinkedList;\nimport java.util.Queue;\n\npublic class Codec {\n\n    // Encodes a tree to a single string.\n    public String serialize(TreeNode root) {\n        if (root == null) {\n            return \"#\";\n        }\n\n        StringBuilder sb = new StringBuilder();\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n\n        while (!queue.isEmpty()) {\n            TreeNode node = queue.poll();\n            if (node != null) {\n                sb.append(node.val).append(\",\");\n                queue.offer(node.left);\n                queue.offer(node.right);\n            } else {\n                sb.append(\"#,\");\n            }\n        }\n        // Remove trailing comma if any\n        if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ',') {\n            sb.deleteCharAt(sb.length() - 1);\n        }\n        return sb.toString();\n    }\n\n    // Decodes your encoded data to tree.\n    public TreeNode deserialize(String data) {\n        if (data.equals(\"#\")) {\n            return null;\n        }\n\n        String[] nodes = data.split(\",\");\n        int i = 0;\n        TreeNode root = new TreeNode(Integer.parseInt(nodes[i++]));\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n\n        while (!queue.isEmpty()) {\n            TreeNode current = queue.poll();\n\n            if (i < nodes.length && !nodes[i].equals(\"#\")) {\n                current.left = new TreeNode(Integer.parseInt(nodes[i]));\n                queue.offer(current.left);\n            }\n            i++;\n\n            if (i < nodes.length && !nodes[i].equals(\"#\")) {\n                current.right = new TreeNode(Integer.parseInt(nodes[i]));\n                queue.offer(current.right);\n            }\n            i++;\n        }\n        return root;\n    }\n}"
+        }
+    }
+]

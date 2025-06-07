@@ -43,7 +43,7 @@ export const useExecutionStore = create<ExecutionState>((set, _) => ({
         expected_outputs,
         problemId
       }));
-      const res = await axiosInstance.post("/execute-code", { 
+      const res = await axiosInstance.post(`/execute-code/${problemId}`, { 
         source_code, 
         language_id, 
         stdin, 

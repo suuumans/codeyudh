@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Mail, User, Shield, Image } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import type { AuthStore } from "../types/authStoreType";
+import ProfileSubmission from "../components/ProfileSubmission";
+import ProblemSolvedByUser from "../components/ProblemSolvedByUser";
+import PlaylistProfile from "../components/PlaylistProfile";
 
 const Profile: React.FC = () => {
   const { authUser } = useAuthStore() as AuthStore;
@@ -71,8 +74,8 @@ const Profile: React.FC = () => {
                 <div className="stat-figure text-primary">
                   <User className="w-8 h-8" />
                 </div>
-                <div className="stat-title">User ID</div>
-                <div className="stat-value text-sm break-all">{authUser.id}</div>
+                <div className="stat-title">username</div>
+                <div className="stat-value text-sm break-all">{authUser.username}</div>
               </div>
               
               {/* Role Status */}
@@ -114,11 +117,11 @@ const Profile: React.FC = () => {
       </div>
 <div>
 
-      {/* <ProfileSubmission/>
+      <ProfileSubmission/>
      
       <ProblemSolvedByUser/>
 
-      <PlaylistProfile/> */}
+      <PlaylistProfile/>
 </div>
       
       {/* PLaylist created by the user and their actions */}

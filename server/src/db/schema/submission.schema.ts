@@ -1,7 +1,7 @@
 
 import { date, json, pgTable, text, uuid } from "drizzle-orm/pg-core";
-import { User } from "./user.schema.ts";
-import { Problem } from "./problem.schema.ts";
+import { User } from "./user.schema";
+import { Problem } from "./problem.schema";
 
 
 export const Submission = pgTable("submissions", {

@@ -1,4 +1,3 @@
-
 import type { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.ts";
 import { ApiError } from "../utils/apiError.ts";
@@ -86,7 +85,7 @@ export const getPlayListDetails = asyncHandler(async (req: Request, res: Respons
     // get the user Id & playlist id from the request
     const userId = req.user?.id
     if(!userId){
-        throw new ApiError(400, "Playlist id is required!")
+        throw new ApiError(400, "Unauthorized request - user id not found")
     }
     const { playlistId } = req.params
     if(!playlistId){
@@ -114,7 +113,8 @@ export const getPlayListDetails = asyncHandler(async (req: Request, res: Respons
             .where(eq(ProblemInPlaylist.playlistId, playlistId))
 
         // extract problems from the join result
-        const problems = PlaylistProblems.map((ProblemInPlaylist) => ProblemInPlaylist.problems)
+        // const problems = PlaylistProblems.map((ProblemInPlaylist) => ProblemInPlaylist.problems)
+        const problems = PlaylistProblems.map((joinResult) => joinResult.problems)
 
         // return response
         return res.status(200).json(
@@ -165,13 +165,23 @@ export const addProblemToPlaylist = asyncHandler(async (req: Request, res: Respo
         if (!playlistExists || playlistExists.length === 0) {
             throw new ApiError(404, "Playlist not found or you don't have access to this playlist.");
         }
-        
+        // Check if the problem is already in the playlist
+        const existing = await db.select().from(ProblemInPlaylist)
+            .where(and(
+                eq(ProblemInPlaylist.playlistId, playlistId),
+                eq(ProblemInPlaylist.problemId, problemId)
+            ))
+            .limit(1);
+        if (existing.length > 0) {
+            return res.status(400).json(
+                new ApiResponse(400, false, "Problem already exists in this playlist", null)
+            );
+        }
         // Add problem to playlist
         const result = await db.insert(ProblemInPlaylist).values({
             playlistId,
             problemId,
         }).returning();
-
 
         // return response
         return res.status(200).json(

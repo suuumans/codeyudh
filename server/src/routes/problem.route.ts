@@ -11,7 +11,7 @@ router.get('/get-all-problems', getAllProblems);
 router.get('/get-problem-by-id/:id', getProblemById);
 router.put('/update-problem-by-id/:id', isAdmin, updateProblemById);
 router.delete('/delete-problem-by-id/:id', isAdmin, deleteProblemById);
-router.get('/get-all-problems-solved-by-user', getAllProblemsSolvedByUser);
+router.get('/get-solved-problems', getAllProblemsSolvedByUser);
 
 
 export default router

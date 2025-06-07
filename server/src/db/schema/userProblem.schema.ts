@@ -10,7 +10,7 @@ export const UserProblems = pgTable("user_problems", {
   problemId: uuid("problem_id").notNull().references(() => Problem.id, { onDelete: 'cascade' }),
   submissionId: uuid("submission_id").references(() => Submission.id, { onDelete: 'set null' }), // optional
 }, (table) => [
-  primaryKey({ columns: [table.userId, table.problemId, table.submissionId] })
+  primaryKey({ columns: [table.userId, table.problemId] }) // , table.submissionId
 ]);
 
 // --- Define relations FOR the join table ---

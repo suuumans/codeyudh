@@ -1,0 +1,43 @@
+services:
+  # Server/API
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: codeyudh-server
+    environment:
+      - PORT=3000
+      - DB_URI=${DB_URI} # Set your Neon.tech URI in a .env file or CI/CD secret
+      - CORS_ORIGIN=${FRONTEND_URL}
+      - BUN_ENV=production
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - ACCESS_TOKEN_EXPIRY=${ACCESS_TOKEN_EXPIRY}}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+      - REFRESH_TOKEN_EXPIRY=${REFRESH_TOKEN_EXPIRY}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - JUDGE0_API_URL=${JUDGE0_API_URL} 
+      - JUDGE0_API_KEY=${JUDGE0_API_KEY}
+    ports:
+      - "5050:5050"
+    networks:
+      - codeyudh-network
+    restart: unless-stopped
+
+  # Client/Frontend
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: codeyudh-client
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - codeyudh-network
+    restart: unless-stopped
+
+networks:
+  codeyudh-network:
+    driver: bridge
+

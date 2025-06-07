@@ -1,9 +1,92 @@
 {
-  "id": "747f79aa-50c2-4504-a65c-641f761e04c2",
+  "id": "79a18613-e614-4ea0-bc23-62c5db2fef26",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.contests": {
+      "name": "contests",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_time": {
+          "name": "start_time",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duration": {
+          "name": "duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "difficulty": {
+          "name": "difficulty",
+          "type": "difficulty",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "participants": {
+          "name": "participants",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "problems": {
+          "name": "problems",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "winners": {
+          "name": "winners",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.playlists": {
       "name": "playlists",
       "schema": "",
@@ -367,10 +450,9 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "gen_random_uuid()"
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
@@ -447,16 +529,7 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "problem_solved_user_id_problem_id_submission_id_pk": {
-          "name": "problem_solved_user_id_problem_id_submission_id_pk",
-          "columns": [
-            "user_id",
-            "problem_id",
-            "submission_id"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "unique_user_problem": {
           "name": "unique_user_problem",
@@ -609,7 +682,7 @@
         },
         "submission_id": {
           "name": "submission_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -944,12 +1017,11 @@
         }
       },
       "compositePrimaryKeys": {
-        "user_problems_user_id_problem_id_submission_id_pk": {
-          "name": "user_problems_user_id_problem_id_submission_id_pk",
+        "user_problems_user_id_problem_id_pk": {
+          "name": "user_problems_user_id_problem_id_pk",
           "columns": [
             "user_id",
-            "problem_id",
-            "submission_id"
+            "problem_id"
           ]
         }
       },

@@ -1,0 +1,49 @@
+# Environment files
+.env
+.env.production
+.env.local
+.env.*.local
+
+# Node/Bun dependencies
+node_modules/
+bun.lockb
+
+# Build output
+dist/
+build/
+*.log
+
+# Vite/React
+client/node_modules/
+client/dist/
+client/.vite/
+client/.next/
+client/.cache/
+client/.turbo/
+client/coverage/
+
+# Server
+server/node_modules/
+server/dist/
+server/.next/
+server/.cache/
+server/.turbo/
+server/coverage/
+
+# OS/Editor
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+*.code-workspace
+
+# Docker
+*.pid
+*.sock
+
+# Misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

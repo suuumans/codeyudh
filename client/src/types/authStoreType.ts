@@ -6,8 +6,9 @@ export type AuthStore = {
   authUser: UserType | null;
   isSigninUp: boolean;
   isLoggingIn: boolean;
+  isAuthenticated: boolean;
   isCheckingAuth: boolean;
-  checkAuth: () => void;
+  checkAuth: () => Promise<void>;
   signup: (data: SignUpSchemaType) => Promise<void>;
   login: (data: LoginSchemaType) => Promise<boolean>;
   logout: () => Promise<void>;

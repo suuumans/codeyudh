@@ -77,7 +77,9 @@ import AdminRoute from './components/AdminRoute.tsx'
 import { AddProblem } from './pages/AddProblem.tsx'
 import Profile from './pages/Profile.tsx'
 import LandingPage from './pages/LandingPage.tsx'
-import ContestsPage from './pages/contestPage.tsx'
+import CreateContestPage from './pages/CreateContestPage.tsx'
+import ContestsPage from './pages/ContestPage.tsx'
+import SheetsPage from './pages/Sheetspage.tsx'
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore() as AuthStore
@@ -108,9 +110,11 @@ function App() {
           <Route path="/problem/:id" element={authUser ? <ProblemPage /> : <Navigate to="/login" />} />
           <Route element={<AdminRoute />}>
             <Route path="/add-problem" element={<AddProblem />} />
+            <Route path="/create-contest" element={<CreateContestPage />} />
           </Route>
+          <Route path="/sheets" element={authUser ? <SheetsPage /> : <Navigate to="/login" />} />
           <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
-          <Route path="/contests" element={authUser ? <ContestsPage /> : <Navigate to="/login" />} />
+          <Route path="/contest" element={authUser ? <ContestsPage /> : <Navigate to="/login" />} />
         </Route>
       </Routes>
     </div>

@@ -28,11 +28,16 @@ export const getJudge0LanguageId = ({ language }: { language: string }) => {
 
 export const pollBatchResults = async ({ tokens }: { tokens: string[] }) => {
     while (true) {
-        const { data } = await axios.get(`${process.env.JUDGE0_API_URL}/submissions/batch`, {
+        const { data } = await axios.get(`${process.env.RAPIDAPI_URL}/submissions/batch`, {
             params: {
                 tokens: tokens.join(","),
                 base64_encoded: true,
                 fields: "*"
+            },
+            headers: {
+                'content-type': 'application/json',
+                'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
+                'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
             }
         });
 
@@ -58,13 +63,18 @@ export const pollBatchResults = async ({ tokens }: { tokens: string[] }) => {
 export const submitBatch = async (submissions: Judge0Submission[]) => {
     try {
         const { data } = await axios.post(
-            `${process.env.JUDGE0_API_URL}/submissions/batch`, 
+            `${process.env.RAPIDAPI_URL}/submissions/batch`, 
             { submissions },
             {
                 params: {
                     base64_encoded: false
+                },
+                headers: {
+                    'content-type': 'application/json',
+                    'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
+                    'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
                 }
-            }
+            },
         );
         
         console.log("Submission results(token): ", data);

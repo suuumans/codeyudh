@@ -72,6 +72,25 @@ const ProblemPage: React.FC = () => {
         }
     };
 
+    const handleSubmitSolution = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        if (!problem) return;
+        try {
+            const language_id = getLanguageId(selectedLanguage);
+            if (language_id === undefined) {
+                throw new Error("Language ID not found");
+            }
+            const stdin = problem.testcases.map((testcase) => testcase.input);
+            const expected_outputs = problem.testcases.map((testcase) => testcase.output);
+            if (id) {
+                // Reuse executeCode for now; backend should treat as submission
+                executeCode(code, language_id, stdin, expected_outputs, id);
+            }
+        } catch (error) {
+            console.log("Error submitting solution", error);
+        }
+    };
+
     if (isProblemLoading || !problem) {
         return (
             <div className="flex items-center justify-center h-screen bg-base-200">
@@ -88,9 +107,9 @@ const ProblemPage: React.FC = () => {
             case "description":
                 return (
                 <div className="prose max-w-none">
-                    <p className="text-lg mb-6">{problem.description}</p>
+                    <p className="text-lg mb-6">{problem.description || <span className='text-base-content/50'>No description available.</span>}</p>
 
-                    {problem.examples && (
+                    {problem.examples && Object.keys(problem.examples).length > 0 ? (
                     <>
                         <h3 className="text-xl font-bold mb-4">Examples:</h3>
                         {Object.entries(problem.examples).map(([lang, example], idx) => (
@@ -124,6 +143,8 @@ const ProblemPage: React.FC = () => {
                         </div>
                         ))}
                     </>
+                    ) : (
+                      <div className="text-base-content/50">No examples available.</div>
                     )}
 
                     {problem.constraints && (
@@ -167,8 +188,8 @@ const ProblemPage: React.FC = () => {
     };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200">
-      <nav className="navbar bg-base-100 shadow-lg px-4">
+    <div className="min-h-screen h-screen bg-gradient-to-br from-base-300 to-base-200 overflow-y-auto">
+      <nav className="navbar bg-base-100 shadow-lg px-4 sticky top-0 z-20">
         <div className="flex-1 gap-2">
           <Link to={'/'} className="flex items-center gap-2 text-primary">
             <Home className="w-6 h-6" />
@@ -203,17 +224,19 @@ const ProblemPage: React.FC = () => {
           <button className="btn btn-ghost btn-circle">
             <Share2 className="w-5 h-5" />
           </button>
-          <select 
-            className="select select-bordered select-primary w-40"
-            value={selectedLanguage}
-            onChange={handleLanguageChange}
-          >
-            {Object.keys(problem.codeSnippets || {}).map((lang) => (
-              <option key={lang} value={lang}>
-                {lang.charAt(0).toUpperCase() + lang.slice(1)}
-              </option>
-            ))}
-          </select>
+          {problem.codeSnippets && Object.keys(problem.codeSnippets).length > 0 && (
+            <select 
+              className="select select-bordered select-primary w-40"
+              value={selectedLanguage}
+              onChange={handleLanguageChange}
+            >
+              {Object.keys(problem.codeSnippets).map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </nav>
 
@@ -253,7 +276,66 @@ const ProblemPage: React.FC = () => {
               </div>
 
               <div className="p-6">
-                {renderTabContent()}
+                {/* Description Tab Content Fixes */}
+                {activeTab === "description" && (
+                  <div className="prose max-w-none">
+                    <p className="text-lg mb-6">{problem.description || <span className='text-base-content/50'>No description available.</span>}</p>
+                    {problem.examples && Object.keys(problem.examples).length > 0 ? (
+                      <>
+                        <h3 className="text-xl font-bold mb-4">Examples:</h3>
+                        {Object.entries(problem.examples).map(([lang, example], idx) => (
+                          <div key={lang} className="bg-base-200 p-6 rounded-xl mb-6 font-mono">
+                            <div className="mb-4">
+                              <div className="text-indigo-300 mb-2 text-base font-semibold">Input:</div>
+                              <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white">{example.input}</span>
+                            </div>
+                            <div className="mb-4">
+                              <div className="text-indigo-300 mb-2 text-base font-semibold">Output:</div>
+                              <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white">{example.output}</span>
+                            </div>
+                            {example.explanation && (
+                              <div>
+                                <div className="text-emerald-300 mb-2 text-base font-semibold">Explanation:</div>
+                                <p className="text-base-content/70 text-lg font-sem">{example.explanation}</p>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <div className="text-base-content/50">No examples available.</div>
+                    )}
+                    {problem.constraints && (
+                      <>
+                        <h3 className="text-xl font-bold mb-4">Constraints:</h3>
+                        <div className="bg-base-200 p-6 rounded-xl mb-6">
+                          <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white text-lg">{problem.constraints}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+                {/* Hints Tab Content Fixes */}
+                {activeTab === "hints" && (
+                  <div className="p-4">
+                    {problem?.hints ? (
+                      <div className="bg-base-200 p-6 rounded-xl">
+                        <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white text-lg">{problem.hints}</span>
+                      </div>
+                    ) : (
+                      <div className="text-center text-base-content/70">No hints available</div>
+                    )}
+                  </div>
+                )}
+                {/* Submissions and Discussion Tabs remain unchanged */}
+                {activeTab === "submissions" && (submissions && Array.isArray(submissions) ? (
+                  <SubmissionsList submissions={submissions} isLoading={isSubmissionsLoading} />
+                ) : (
+                  <div className="text-base-content/70">No submission data available</div>
+                ))}
+                {activeTab === "discussion" && (
+                  <div className="p-4 text-center text-base-content/70">No discussions yet</div>
+                )}
               </div>
             </div>
           </div>
@@ -266,7 +348,6 @@ const ProblemPage: React.FC = () => {
                   Code Editor
                 </button>
               </div>
-              
               <div className="h-[600px] w-full">
                 <Editor
                   height="100%"
@@ -276,7 +357,7 @@ const ProblemPage: React.FC = () => {
                   onChange={(value) => setCode(value || '')}
                   options={{
                     minimap: { enabled: false },
-                    fontSize: 22,
+                    fontSize: 15,
                     lineNumbers: 'on',
                     roundedSelection: false,
                     scrollBeyondLastLine: false,
@@ -285,7 +366,6 @@ const ProblemPage: React.FC = () => {
                   }}
                 />
               </div>
-
               <div className="p-4 border-t border-base-300 bg-base-200">
                 <div className="flex justify-between items-center">
                   <button 
@@ -296,7 +376,7 @@ const ProblemPage: React.FC = () => {
                     {!isExecuting && <Play className="w-4 h-4" />}
                     Run Code
                   </button>
-                  <button className="btn btn-success gap-2">
+                  <button className="btn btn-success gap-2" onClick={handleSubmitSolution} disabled={isExecuting}>
                     Submit Solution
                   </button>
                 </div>
@@ -330,12 +410,14 @@ const ProblemPage: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {testCases.map((testCase, index) => (
+                      {testCases.length > 0 ? testCases.map((testCase, index) => (
                         <tr key={testCase.id ?? index}>
                           <td className="font-mono">{testCase.input}</td>
                           <td className="font-mono">{testCase.output}</td>
                         </tr>
-                      ))}
+                      )) : (
+                        <tr><td colSpan={2} className="text-center text-base-content/50">No test cases available.</td></tr>
+                      )}
                     </tbody>
                   </table>
                 </div>

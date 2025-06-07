@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState } from 'react'
 import type { Problem } from '../store/useProblemStore'
 import { useAuthStore } from '../store/useAuthStore';
@@ -43,7 +42,7 @@ const ProblemTable: React.FC<ProblemTableProps> = ({ problems, onDeleteProblem }
       .filter((problem) => selectedTag === 'ALL' || problem.tags?.includes(selectedTag))
     }, [search, difficulty, selectedTag, problems])
 
-    const itemsPerPage = 5
+    const itemsPerPage = 15
     const totalPages = Math.ceil(filteredProblems.length / itemsPerPage)
     const paginatedProblems = useMemo(() => {
       return filteredProblems.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)

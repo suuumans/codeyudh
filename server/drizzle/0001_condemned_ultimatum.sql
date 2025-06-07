@@ -1,1 +1,0 @@
-ALTER TABLE "test_case_results" ALTER COLUMN "submission_id" SET DATA TYPE uuid;

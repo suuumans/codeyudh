@@ -10,7 +10,7 @@ import type { AuthStore } from '../types/authStoreType.ts'
 import CodeBackground from '../components/AuthImagePattern.tsx'
 
 
-function SignUpPage() {
+const SignUpPage: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false)
   const { signup, isSigninUp } = useAuthStore() as AuthStore
@@ -50,7 +50,7 @@ function SignUpPage() {
             
             {/* name */}
             <div className="form-control">
-              <label className="label">
+              <label htmlFor='name' className="label">
                 <span className="label-text font-medium">Name</span>
               </label>
               <div className="relative">
@@ -73,7 +73,7 @@ function SignUpPage() {
 
             {/* Email */}
             <div className="form-control">
-              <label className="label">
+              <label htmlFor='email' className="label">
                 <span className="label-text font-medium">Email</span>
               </label>
               <div className="relative">
@@ -94,9 +94,32 @@ function SignUpPage() {
               )}
             </div>
 
+            {/* username */}
+            <div>
+              <label htmlFor='username' className="label">
+                <span className="label-text font-medium">Username</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Code className="h-5 w-5 text-base-content/40" />
+                </div>
+                <input
+                  type="text"
+                  {...register("username")}
+                  className={`input input-bordered w-full pl-10 ${
+                    errors.username ? "input-error" : ""
+                  }`}
+                  placeholder="johndoe"
+                />
+              </div>
+              {errors.username && (
+                <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>
+              )}
+            </div>
+
             {/* Password */}
             <div className="form-control">
-              <label className="label">
+              <label htmlFor='password' className="label">
                 <span className="label-text font-medium">Password</span>
               </label>
               <div className="relative">

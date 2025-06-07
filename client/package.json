@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
+    "build:check": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -15,6 +16,7 @@
     "@tailwindcss/vite": "^4.1.6",
     "axios": "^1.9.0",
     "daisyui": "^5.0.35",
+    "framer-motion": "^12.16.0",
     "lucide-react": "^0.510.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

@@ -20,7 +20,7 @@ export const useSubmissionStore = create<{
   getAllSubmissions: async () => {
     try {
       set({ isLoading: true });
-      const res = await axiosInstance.get("/submissions/get-all-submissions");
+      const res = await axiosInstance.get("/submission/get-all-submissions");
 
       set({ submissions: res.data.submissions });
 
@@ -36,7 +36,7 @@ export const useSubmissionStore = create<{
   getSubmissionForProblem: async (problemId: string) => {
     try {
       const res = await axiosInstance.get(
-        `/submissions/get-submissions/${problemId}`
+        `/submission/get-submission/${problemId}`
       );
       // Ensure testCases in submission have all required properties
       const rawSubmission = res.data.submissions;
@@ -64,7 +64,7 @@ export const useSubmissionStore = create<{
   getSubmissionCountForProblem: async (problemId: string) => {
     try {
       const res = await axiosInstance.get(
-        `/submissions/get-submissions-count/${problemId}`
+        `/submission/get-submissions-count/${problemId}`
       );                
 
       set({ submissionCount: res.data.count });

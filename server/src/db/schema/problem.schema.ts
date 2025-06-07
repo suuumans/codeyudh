@@ -14,6 +14,7 @@ export const Problem = pgTable('problems', {
     description: text('description').notNull(),
     difficulty: difficultyEnum('difficulty').notNull(),
     tags: text('tags').array(), // Array of strings like ['tag1', 'tag2', 'tag3']
+    // company: text('company'),
     userId: uuid("user_id").notNull().references(() => User.id, { onDelete: "cascade" }), // if user is deleted, delete all problems created by that user
     examples: json('examples'),
     input: text('input'),

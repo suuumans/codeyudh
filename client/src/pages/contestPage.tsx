@@ -25,7 +25,7 @@ interface ContestRanking {
   rank: number;
 }
 
-const ContestsPage: React.FC = () => {
+const ContestPage: React.FC = () => {
   const [contests, setContests] = useState<ContestsState>({
     upcoming: [],
     active: [],
@@ -353,4 +353,4 @@ const ContestsPage: React.FC = () => {
   );
 };
 
-export default ContestsPage;
+export default ContestPage;

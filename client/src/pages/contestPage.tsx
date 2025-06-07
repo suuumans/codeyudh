@@ -165,7 +165,7 @@ const ContestPage: React.FC = () => {
         <div className="text-center py-16">
           <p className="text-xl text-gray-500">No contests available at the moment.</p>
           {activeTab === 'upcoming' && (
-            <p className="mt-2 text-gray-400">Check back soon for new challenges!</p>
+            <p className="mt-2 text-gray-400">Check back soon for new challenges! We are trying our best to add new contest.</p>
           )}
         </div>
       );

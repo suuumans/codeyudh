@@ -25,19 +25,18 @@ const router = express.Router();
 router.post('/register', validate(registerUserSchema), registerUser);
 router.post('/login',validate(loginUserSchema), loginUser);
 router.get('/verify', verifyUser);
+router.post('/resend-verification-email', resendVerificationEmail);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
+router.post('/refresh-access-token', refreshAccessToken); // This can be public but needs a cookie
 
 // ----------- Private routes -----------
 router.use(verifyJWT);
 router.get('/check', checkAuth);
 router.post('/logout', logoutUser);
 router.get('/profile', getUserProfile);
-router.put('/update-profile', updateUserProfile);
+router.patch('/update-profile', updateUserProfile); // PATCH for partial updates
 router.post('/change-password', changePassword);
 router.delete('/delete-profile', deleteUserProfile);
-
-router.post('/resend-verification-email', resendVerificationEmail);
-router.post('/refresh-access-token', refreshAccessToken);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
 
 export default router;

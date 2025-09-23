@@ -32,7 +32,7 @@ router.post('/refresh-access-token', refreshAccessToken); // This can be public 
 
 // ----------- Private routes -----------
 router.use(verifyJWT);
-router.get('/check', checkAuth);
+router.get('/check-auth', checkAuth);
 router.post('/logout', logoutUser);
 router.get('/profile', getUserProfile);
 router.patch('/update-profile', updateUserProfile); // PATCH for partial updates

@@ -65,88 +65,67 @@ import { Problem } from "../db/schema/problem.schema.ts"
  *         description: Internal Server Error.
  */
 export const registerUser = asyncHandler( async (req: Request, res: Response) => {
-    const { name, username, email, password } = req.body
+    const { name, username, email, password } = req.body;
 
-    if (!(name && username && email && password)) {
-        throw new ApiError(400, "All input fields are required")
+    // Check if user already exists
+    const existingUser = await db.select().from(User).where(eq(User.email, email)).limit(1);
+    if (existingUser.length > 0) {
+        throw new ApiError(409, "User with this email already exists");
     }
-    try {
-        
-        // Check if user already exists
-        const existingUser = await db.select().from(User).where(eq(User.email, email)).limit(1)
-        if (!existingUser || existingUser.length > 0) {
-            throw new ApiError(400, "User already exists")
-        }
-    
-        // hash password
-        const hashedPassword = await Bun.password.hash(password)
-    
-        const newUserResult = await db.insert(User).values({
-            name,
-            username,
-            email,
-            password: hashedPassword,
-        }).returning()
-    
-        if (!newUserResult) {
-            throw new ApiError(500, "User registration failed during database insertion. Please try again later.")
-        }
 
-        const newUser = newUserResult[0]
+    // hash password
+    const hashedPassword = await Bun.password.hash(password);
 
-        // generate verification token
-        const { unhashedToken, hashedToken, tokenExpiry } = await generateVerificationToken()
+    const newUserResult = await db.insert(User).values({
+        name,
+        username,
+        email,
+        password: hashedPassword,
+    }).returning();
 
-        // update verification token in data base
-        const updatedUser = await db.update(User).set({
-            verificationToken: hashedToken,
-            verificationTokenExpiry: tokenExpiry,
-            isEmailVerified: false,
-        }).where(eq(User.id, newUser.id)).returning()
-
-        if (!updatedUser || updatedUser.length === 0) {
-            throw new ApiError(500, "User registration failed during database insertion. Please try again later.")
-        }
-
-        // create verification url for email
-        const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${unhashedToken}`
-
-        // generate email content
-        const mailGenContent = emailVerificationGenContent(newUser.name, verificationUrl)
-
-        // send verification email
-        try {
-            await sendMail({
-                email: newUser.email,
-                subject: "Verify your email address",
-                mailgenContent: mailGenContent
-            })
-
-
-            return res.status(201).json(
-                new ApiResponse(201,
-                    true,
-                    "User registered successfully",
-                    {
-                        user: {
-                            id: newUser.id, // FIX: only return the user id, not the whole user object
-                            name: newUser.name,
-                            username: newUser.username,
-                            email: newUser.email,
-                            isEmailVerified: false,
-                        }
-                    }
-                )
-            )
-        } catch (error) {
-            console.error('Error sending verification email: ', error);
-            return new ApiError(500, "Failed to send verification email. Please try again later.");
-        }
-
-    } catch (error) {
-        console.log("Error registering user: ", error)
-        throw new ApiError(500, "Internal server error. User registration failed. Please try again later.")
+    if (!newUserResult || newUserResult.length === 0) {
+        throw new ApiError(500, "User registration failed during database insertion.");
     }
+
+    const newUser = newUserResult[0];
+
+    // generate verification token
+    const { unhashedToken, hashedToken, tokenExpiry } = await generateVerificationToken();
+
+    // update verification token in data base
+    await db.update(User).set({
+        verificationToken: hashedToken,
+        verificationTokenExpiry: tokenExpiry,
+    }).where(eq(User.id, newUser.id));
+
+    // create verification url for email
+    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${unhashedToken}`;
+
+    // generate email content
+    const mailGenContent = emailVerificationGenContent(newUser.name, verificationUrl);
+
+    // send verification email
+    await sendMail({
+        email: newUser.email,
+        subject: "Verify your email address",
+        mailgenContent: mailGenContent
+    });
+
+    return res.status(201).json(
+        new ApiResponse(201,
+            true,
+            "User registered successfully. Please check your email to verify your account.",
+            {
+                user: {
+                    id: newUser.id,
+                    name: newUser.name,
+                    username: newUser.username,
+                    email: newUser.email,
+                    isEmailVerified: false,
+                }
+            }
+        )
+    );
 })
 
 /**
@@ -155,71 +134,101 @@ export const registerUser = asyncHandler( async (req: Request, res: Response) =>
  * @route POST /api/v1/auth/login
  * @access Public anyone can access login route
  */
-export const loginUser = asyncHandler( async (req: Request, res: Response) => {
-    const { email, password } = req.body
 
-    if (!(email && password)) {
-        throw new ApiError(400, "All input fields are required")
+/**
+ * @openapi
+ * /auth/login:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Login user
+ *     description: Logs in a user and generates access and refresh tokens.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: john.doe@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 example: MySecurePassword123
+ *     responses:
+ *       '200':
+ *         description: User logged in successfully. Access and refresh tokens returned.
+ *       '400':
+ *         description: Bad Request - Missing fields or user not found.
+ *       '401':
+ *         description: Unauthorized - Invalid password or email not verified.
+ *       '500':
+ *         description: Internal Server Error.
+ *   
+ */
+export const loginUser = asyncHandler(async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    // check if user exists with the given email
+    const existingUser = await db.select().from(User).where(eq(User.email, email)).limit(1);
+    if (existingUser.length === 0) {
+        throw new ApiError(404, "User not found with the given email");
+    }
+    const user = existingUser[0];
+    // check if password is correct
+    const isPasswordCorrect = await Bun.password.verify(password, user.password);
+    if (!isPasswordCorrect) {
+        throw new ApiError(401, "Invalid password! Please enter correct password.");
     }
 
-    try {
-        // check if user exists with the given email
-        const existingUser = await db.select().from(User).where(eq(User.email, email)).limit(1)
-        if (!existingUser || existingUser.length === 0) {
-            throw new ApiError(404, "User not found with the given email")
-        }
-        const user = existingUser[0]
-        // check if password is correct
-        const isPasswordCorrect = await Bun.password.verify(password, user.password)
-        if (!isPasswordCorrect) {
-            throw new ApiError(401, "Invalid password! Please enter correct password.")
-        }
-
-        // check if email is verified
-        if (!user.isEmailVerified) {
-            throw new ApiError(401, "Email not verified! Please verify your email.")
-        }
-
-        // generate access & refresh token
-        const { accessToken, refreshToken } = await generateAuthTokens(user)
-
-        // store the token in db
-        await db.update(User).set({
-            refreshToken,
-            // refreshTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        }).where(eq(User.id, user.id)).returning()
-
-        // create cookie options
-        const cookieOptions = {
-            httpOnly: true,
-            secure: process.env.BUN_ENV === "production",
-        }
-
-        // set cookies
-        res.cookie("accessToken", accessToken, cookieOptions)
-        res.cookie("refreshToken", refreshToken, cookieOptions)
-
-        // return response
-        return res.status(200).json(
-            new ApiResponse(200,
-                true,
-                "User logged in successfully",
-                {
-                    user: {
-                        id: user.id,
-                        name: user.name,
-                        username: user.username,
-                        email: user.email,
-                        isEmailVerified: user.isEmailVerified,
-                    }
-                }
-            )
-        )
-
-    } catch (error) {
-        console.error("Login user error: ", error)
-        return new ApiError(500, "Internal server error while logging in user!")
+    // check if email is verified
+    if (!user.isEmailVerified) {
+        throw new ApiError(401, "Email not verified! Please verify your email.");
     }
+
+    // This is a defensive check. With the schema change, this should never be null.
+    if (!user.role) {
+        throw new ApiError(500, "User role is not set. Please contact support.");
+    }
+
+    // generate access & refresh token
+    const { accessToken, refreshToken } = await generateAuthTokens(user);
+
+    // store the token in db
+    await db.update(User).set({
+        refreshToken,
+    }).where(eq(User.id, user.id));
+
+    // create cookie options
+    const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.BUN_ENV === "production",
+    };
+
+    // set cookies
+    res.cookie("accessToken", accessToken, cookieOptions);
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+
+    // return response
+    return res.status(200).json(
+        new ApiResponse(200, true, "User logged in successfully", {
+            user: {
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                isEmailVerified: user.isEmailVerified,
+                role: user.role,
+            },
+        })
+    );
 })
 
 /**
@@ -227,6 +236,25 @@ export const loginUser = asyncHandler( async (req: Request, res: Response) => {
  * @headers { Authorization: Bearer <access_token> }
  * @route POST /api/v1/auth/logout
  * @access Private only logged in user can access
+ */
+
+/**
+ * @openapi
+ * /auth/logout:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Logout user
+ *     description: Logs out a user and clears access and refresh tokens from cookies.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: User logged out successfully.
+ *       '401':
+ *         description: Unauthorized - User not found.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const logoutUser = asyncHandler(async(req: Request, res: Response) => {
     // get the user id from the request
@@ -270,6 +298,32 @@ export const logoutUser = asyncHandler(async(req: Request, res: Response) => {
  * @route POST /api/v1/auth/verify
  * @access Public only logged in user can access
 */
+
+/**
+ * @openapi
+ * /auth/verify/{token}:
+ *   get:
+ *     tags:
+ *       - Auth
+ *     summary: Verify user
+ *     description: Verifies a user's email by accepting a verification token.
+ *     parameters:
+ *       - name: token
+ *         in: path
+ *         description: The verification token to be accepted.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: User email verified successfully.
+ *       '400':
+ *         description: Bad Request - Token is required.
+ *       '404':
+ *         description: Not Found - User not found. Invalid verification token.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const verifyUser = asyncHandler(async (req: Request, res: Response) => {
     const { token } = req.params
     if(!token){
@@ -313,6 +367,36 @@ export const verifyUser = asyncHandler(async (req: Request, res: Response) => {
  * @body {string} email
  * @route POST /api/v1/auth/resend-verification-email
  * @access Public anyone can access
+ */
+
+/**
+ * @openapi
+ * /auth/resend-verification-email:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Resend verification email
+ *     description: Resends a verification email to a user's email address.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: true
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       '200':
+ *         description: Verification email resent successfully.
+ *       '400':
+ *         description: Bad Request - Email is required.
+ *       '404':
+ *         description: Not Found - User not found. Invalid email.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const resendVerificationEmail = asyncHandler(async(req: Request, res: Response) => {
     // get the email from the body
@@ -378,6 +462,25 @@ export const resendVerificationEmail = asyncHandler(async(req: Request, res: Res
  * @route POST /api/v1/auth/refresh-access-token
  * @access Private only logged in user can access
  */
+
+/**
+ * @openapi
+ * /auth/refresh-access-token:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Refresh access token
+ *     description: Refreshes the access token using a refresh token.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Access token refreshed successfully.
+ *       '401':
+ *         description: Unauthorized - Invalid refresh token.   
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const refreshAccessToken = asyncHandler(async(req: Request, res: Response) => {
     try {
         // get the refreshToken from the cookie
@@ -442,6 +545,38 @@ export const refreshAccessToken = asyncHandler(async(req: Request, res: Response
  * @route POST /api/v1/auth/forgot-password
  * @access Public anyone can access
  */
+
+/**
+ * @openapi
+ * /auth/forgot-password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Forgot password
+ *     description: Sends a password reset email to the user with the provided email address.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The email address of the user.
+ *                 format: email
+ *     responses:
+ *       '200':
+ *         description: Password reset email sent successfully.
+ *       '400':
+ *         description: Bad Request - Email is required.
+ *       '404':
+ *         description: Not Found - User not found.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const forgotPassword = asyncHandler(async(req: Request, res: Response) => {
     // get the email from body
     const { email } = req.body
@@ -464,12 +599,12 @@ export const forgotPassword = asyncHandler(async(req: Request, res: Response) =>
 
         // update verification token in data base
         await db.update(User).set({
-            verificationToken: hashedToken,
-            verificationTokenExpiry: tokenExpiry,
+            forgetPasswordToken: hashedToken,
+            forgetPasswordTokenExpiry: tokenExpiry,
         }).where(eq(User.id, user[0].id)).returning()
 
         // create reset password url
-        const resetPasswordUrl = `${process.env.CLIENT_URL}/reset-password?token=${unhashedToken}`
+        const resetPasswordUrl = `${process.env.FRONTEND_URL}/reset-password?token=${unhashedToken}`
 
         // generate email content
         const mailGenContent = forgotPasswordGenContent(user[0].name, resetPasswordUrl)
@@ -499,6 +634,41 @@ export const forgotPassword = asyncHandler(async(req: Request, res: Response) =>
  * @route POST /api/v1/auth/reset-password
  * @access Public anyone can access
  */
+
+/**
+ * @openapi
+ * /auth/reset-password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Reset password
+ *     description: Resets the password for the user with the provided token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - password
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: The password reset token.
+ *               password:
+ *                 type: string
+ *                 description: The new password for the user.
+ *     responses:
+ *       '200':
+ *         description: Password reset successful.
+ *       '400':
+ *         description: Bad Request - Token and password are required.
+ *       '404':
+ *         description: Not Found - User not found. Invalid token.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const resetPassword = asyncHandler(async(req: Request, res: Response) => {
     // get the token and password from body
     const { token, password } = req.body
@@ -513,10 +683,10 @@ export const resetPassword = asyncHandler(async(req: Request, res: Response) => 
         const hashedToken = new Bun.CryptoHasher("sha256").update(token).digest("hex")
 
         // find user with this token
-        const user = await db.select().from(User).where(eq(User.verificationToken, hashedToken)).limit(1)
+        const user = await db.select().from(User).where(eq(User.forgetPasswordToken, hashedToken)).limit(1)
 
         if(!user || user.length === 0){
-            throw new ApiError(404, "User not found! Please enter valid token.")
+            throw new ApiError(404, "Invalid or expired password reset token.")
         }
 
         // hash the password
@@ -525,8 +695,8 @@ export const resetPassword = asyncHandler(async(req: Request, res: Response) => 
         // update user password
         const updatedUser = await db.update(User).set({
             password: hashedPassword,
-            verificationToken: null,
-            verificationTokenExpiry: null,
+            forgetPasswordToken: null,
+            forgetPasswordTokenExpiry: null,
         }).where(eq(User.id, user[0].id)).returning()
 
         if(!updatedUser || updatedUser.length === 0){
@@ -549,6 +719,43 @@ export const resetPassword = asyncHandler(async(req: Request, res: Response) => 
  * @body {string} newPassword
  * @route POST /api/v1/auth/change-password
  * @access Private only logged in user can access
+ */
+
+/**
+ * @openapi
+ * /auth/change-password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Change password
+ *     description: Changes the password for the authenticated user.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: The current password for the user.
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password for the user.
+ *     responses:
+ *       '200':
+ *         description: Password changed successfully.
+ *       '400':
+ *         description: Bad Request - Current password and new password are required.
+ *       '401':
+ *         description: Unauthorized - Invalid current password.
+ *       '404':
+ *         description: Not Found - User not found.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const changePassword = asyncHandler(async(req: Request, res: Response) => {
     // get the current password and new password from body
@@ -608,6 +815,27 @@ export const changePassword = asyncHandler(async(req: Request, res: Response) =>
  * @route GET /api/v1/auth/profile
  * @access Private only logged in user can access
  */
+
+/**
+ * @openapi
+ * /auth/profile:
+ *   get:
+ *     tags:
+ *       - Auth
+ *     summary: Get user profile
+ *     description: Gets the profile of the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: User profile fetched successfully.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '404':
+ *         description: Not Found - User not found.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const getUserProfile = asyncHandler(async(req: Request, res: Response) => {
     // get the user id from the request
     const userId = req.user?.id
@@ -645,6 +873,38 @@ export const getUserProfile = asyncHandler(async(req: Request, res: Response) =>
  * @body {string} username
  * @route PUT /api/v1/auth/profile
  * @access Private only logged in user can access
+ */
+
+/**
+ * @openapi
+ * /auth/profile:
+ *   patch:
+ *     tags:
+ *       - Auth
+ *     summary: Update user profile
+ *     description: Updates the profile of the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: User profile updated successfully.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '404':
+ *         description: Not Found - User not found.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const updateUserProfile = asyncHandler(async(req: Request, res: Response) => {
     // get the user id from the request
@@ -693,6 +953,27 @@ export const updateUserProfile = asyncHandler(async(req: Request, res: Response)
  * @route DELETE /api/v1/auth/delete-profile
  * @access Private only logged in user can access
  */
+
+/**
+ * @openapi
+ * /auth/delete-profile:
+ *   delete:
+ *     tags:
+ *       - Auth
+ *     summary: Delete user profile
+ *     description: Deletes the profile of the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: User profile deleted successfully.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '404':
+ *         description: Not Found - User not found.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const deleteUserProfile = asyncHandler(async(req: Request, res: Response) => {
     // get the user id from the request
     const userId = req.user?.id
@@ -735,6 +1016,25 @@ export const deleteUserProfile = asyncHandler(async(req: Request, res: Response)
  * @route GET /api/v1/auth/problems-solved
  * @access Private only logged in user can access
  */
+
+/**
+ * @openapi
+ * /auth/problems-solved:
+ *   get:
+ *     summary: Get all problems solved by the user
+ *     description: Returns a list of problems solved by the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Problems fetched successfully.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '404':
+ *         description: Not Found - User not found.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const getAllProblemsSolvedByUser = asyncHandler(async (req: Request, res: Response) => {
   // get the user id from the request
   const userId = req.user?.id;
@@ -765,6 +1065,31 @@ export const getAllProblemsSolvedByUser = asyncHandler(async (req: Request, res:
   }
 });
 
+/**
+ * @description check if user is authenticated
+ * @headers { Authorization: Bearer <access_token> }
+ * @route GET /api/v1/auth/check-auth
+ * @access Private only logged in user can access
+ */
+
+/**
+ * @openapi
+ * /auth/check-auth:
+ *   get:
+ *     tags:
+ *       - Auth
+ *     summary: Check if the user is authenticated
+ *     description: Checks if the user is authenticated and returns the user data.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: User is authenticated.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const checkAuth = asyncHandler(async(req: Request, res: Response) => {
     try {
         const data = req.user;

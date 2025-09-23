@@ -21,7 +21,7 @@ interface Testcase {
 interface ReferenceSolution {
     [language: string]: string;
 }
-  
+    
 interface CreateProblemRequest {
     title: string;
     description: string;
@@ -32,7 +32,7 @@ interface CreateProblemRequest {
     testCases: Testcase[];
     codeSnippets?: any;
     referenceSolution: ReferenceSolution;
-    // Add other fields as needed
+    // Add other fields if needed
 }
   
 
@@ -54,7 +54,7 @@ async function validateReferenceSolution(referenceSolution: ReferenceSolution, t
             const tokens = submissionResults.map((result: { token: string }) => result.token);
             const results = await pollBatchResults({ tokens });
             for (let i = 0; i < results.length; i++) {
-                if (results[i].status.id === 3) {
+                if (results[i].status.id === 3) { // Judge0 typically uses status.id: 6
                     throw new ApiError(400, `Compilation Error: Testcase ${i + 1} failed for language ${language}`);
                 }
             }
@@ -88,7 +88,8 @@ async function findProblemById(id: string) {
  * @access Private only admin can access
  */
 export const createProblem = asyncHandler(async(req: Request, res: Response) => {
-    const { title,
+    const { 
+        title,
         description,
         difficulty,
         tags,

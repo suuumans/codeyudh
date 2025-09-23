@@ -7,6 +7,7 @@ import executeCode from './routes/executeCode.route.ts';
 import submissions from './routes/submission.route.ts';
 import playlist from './routes/playlist.route.ts';
 import contestRouter from './routes/contest.route.ts';
+import { setupSwagger } from './utils/swagger.ts';
 
 const app = express()
 
@@ -31,5 +32,7 @@ app.get('/test', (req, res) => {
     res.send('Server is working just fine! :)');
 });
   
+
+setupSwagger(app);
 
 export default app

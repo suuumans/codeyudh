@@ -231,7 +231,8 @@ interface ExecutionResult {
 
 /**
  * @description Execute code and validate against test cases
- * @body { source_code: string, language_id: number, stdin: string[], expected_outputs: string[], problem_id: string }
+ * @params problem_id: string
+ * @body { source_code: string, language_id: number, stdin: string[], expected_outputs: string[] }
  * @route POST /api/v1/execute-code
  * @access Private only logged in user can access
  */

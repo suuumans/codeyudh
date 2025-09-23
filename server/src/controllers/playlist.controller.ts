@@ -44,8 +44,8 @@ export const createPlaylist = asyncHandler(async (req: Request, res: Response) =
         }).returning()
 
         // return response
-        return res.status(200).json(
-            new ApiResponse(200, true, "Playlist created successfully", playlist)
+        return res.status(201).json(
+            new ApiResponse(201, true, "Playlist created successfully", playlist)
         )
     } catch (error) {
         console.error("Error creating playlist: ", error)

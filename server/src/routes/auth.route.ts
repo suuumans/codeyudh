@@ -33,6 +33,11 @@ router.post('/logout', logoutUser);
 router.get('/profile', getUserProfile);
 router.put('/update-profile', updateUserProfile);
 router.post('/change-password', changePassword);
-router.post('/delete-profile', deleteUserProfile);
+router.delete('/delete-profile', deleteUserProfile);
+
+router.post('/resend-verification-email', resendVerificationEmail);
+router.post('/refresh-access-token', refreshAccessToken);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 export default router;

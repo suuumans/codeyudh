@@ -20,6 +20,50 @@ import { Problem } from "../db/schema/problem.schema.ts"
  * @route POST /api/v1/auth/register
  * @access Public anyone can access register route
  */
+
+/** 
+ * @openapi
+ * /auth/register:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Register a new user
+ *     description: Creates a new user account, hashes the password, and sends a verification email.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - username
+ *               - email
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               username:
+ *                 type: string
+ *                 example: johndoe
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: john.doe@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 example: MySecurePassword123
+ *     responses:
+ *       '201':
+ *         description: User registered successfully. A verification email has been sent.
+ *       '400':
+ *         description: Bad Request - Missing fields or user with this email already exists.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const registerUser = asyncHandler( async (req: Request, res: Response) => {
     const { name, username, email, password } = req.body
 

@@ -24,7 +24,7 @@ export const User = pgTable("users", {
   verificationToken: varchar("verification_token"),
   verificationTokenExpiry: timestamp("email_verification_token_expiry", { withTimezone: true }),
   
-  role: rolesEnum("role").default("USER"),
+  role: rolesEnum("role").default("USER").notNull(),
 
   createdAt: timestamp("created_at", { withTimezone: true}).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true}).notNull().defaultNow(),

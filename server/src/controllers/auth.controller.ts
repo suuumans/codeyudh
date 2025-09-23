@@ -1092,9 +1092,9 @@ export const getAllProblemsSolvedByUser = asyncHandler(async (req: Request, res:
  */
 export const checkAuth = asyncHandler(async(req: Request, res: Response) => {
     try {
-        const data = req.user;
+        const data = req.user?.isEmailVerified || req.user;
         return res.status(200).json(
-            new ApiResponse(200, true, "User is authenticated", data)
+            new ApiResponse(200, true, "User is authenticated and verified", data)
         )
     } catch (error) {
         console.error('Error checking authentication:', error);

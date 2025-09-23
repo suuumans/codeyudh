@@ -15,7 +15,7 @@ import {
     deleteUserProfile,
     checkAuth
  } from '../controllers/auth.controller.ts';
-import { loginUserSchema, registerUserSchema } from '../validators/auth.validators.ts';
+import { forgotPasswordSchema, loginUserSchema, registerUserSchema, resendVerificationEmailSchema } from '../validators/auth.validators.ts';
 import { validate } from '../middlewares/validator.middleware.ts';
 import { verifyJWT } from '../middlewares/auth.middleware.ts';
 
@@ -25,8 +25,8 @@ const router = express.Router();
 router.post('/register', validate(registerUserSchema), registerUser);
 router.post('/login',validate(loginUserSchema), loginUser);
 router.get('/verify', verifyUser);
-router.post('/resend-verification-email', resendVerificationEmail);
-router.post('/forgot-password', forgotPassword);
+router.post('/resend-verification-email', validate(resendVerificationEmailSchema), resendVerificationEmail);
+router.post('/forgot-password',validate(forgotPasswordSchema), forgotPassword);
 router.post('/reset-password', resetPassword);
 router.post('/refresh-access-token', refreshAccessToken); // This can be public but needs a cookie
 

@@ -236,6 +236,65 @@ interface ExecutionResult {
  * @route POST /api/v1/execute-code
  * @access Private only logged in user can access
  */
+
+/**
+ * @openapi
+ * /execute-code/{problem_id}:
+ *   post:
+ *     tags:
+ *       - Code Execution
+ *     summary: Execute code and get results
+ *     description: Submits user's code for a specific problem, runs it against all test cases, and returns the execution results.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: problem_id
+ *         in: path
+ *         required: true
+ *         description: The ID of the problem to execute the code against.
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - source_code
+ *               - language_id
+ *               - stdin
+ *               - expected_outputs
+ *             properties:
+ *               source_code:
+ *                 type: string
+ *                 description: The user's code to be executed.
+ *                 example: "function solve() { return 42; }"
+ *               language_id:
+ *                 type: number
+ *                 description: The ID of the language from Judge0 API.
+ *                 example: 93
+ *               stdin:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: An array of inputs, one for each test case.
+ *               expected_outputs:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: An array of expected outputs, corresponding to each stdin.
+ *     responses:
+ *       '200':
+ *         description: Code executed successfully. Returns the submission summary and results.
+ *       '400':
+ *         description: Bad Request - Invalid input, such as missing fields or compilation errors.
+ *       '401':
+ *         description: Unauthorized - User is not authenticated.
+ *       '500':
+ *         description: Internal Server Error - Could not process the execution request.
+ */
 export const executeCode = asyncHandler(async(req: Request, res: Response) => {
     const { source_code, language_id, stdin, expected_outputs } = req.body;
     const { problem_id } = req.params;

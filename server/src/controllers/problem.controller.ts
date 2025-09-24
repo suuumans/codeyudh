@@ -87,6 +87,76 @@ async function findProblemById(id: string) {
  * @route POST /api/v1/problems/create-problem
  * @access Private only admin can access
  */
+
+/**
+ * @openapi
+ * /problems/create-problem:
+ *   post:
+ *     tags:
+ *       - Problem
+ *     summary: Create a new problem
+ *     description: Creates a new problem with the provided details
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               difficulty:
+ *                 type: string
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               constraints:
+ *                 type: string
+ *               examples:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     input:
+ *                       type: string
+ *                     output:
+ *                       type: string
+ *               testCases:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     input:
+ *                       type: string
+ *                     output:
+ *                       type: string
+ *               codeSnippets:
+ *                 type: object
+ *                 properties:
+ *                   code:
+ *                     type: string
+ *                   language:
+ *                     type: string
+ *               referenceSolution:
+ *                 type: object
+ *                 properties:
+ *                   language:
+ *                     type: string
+ *                   code:
+ *                     type: string
+ *     responses:
+ *       '200':
+ *         description: Problem created successfully.
+ *       '400':
+ *         description: Bad Request - Invalid request data.
+ *       '401':
+ *         description: Unauthorized - User is not authenticated.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const createProblem = asyncHandler(async(req: Request, res: Response) => {
     const { 
         title,
@@ -164,6 +234,23 @@ export const createProblem = asyncHandler(async(req: Request, res: Response) => 
  * @route GET /api/v1/get-all-problems
  * @access Public anyone can access
  */
+
+/**
+ * @openapi
+ * /problems/get-all-problems:
+ *   get:
+ *     summary: Get all problems
+ *     description: Returns a list of all problems.
+ *     tags:
+ *       - Problem
+ *     responses:
+ *       '200':
+ *         description: Problems fetched successfully.
+ *       '404':
+ *         description: Not Found - Problems not found.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const getAllProblems = asyncHandler(async(req: Request, res: Response) => {
     try {
         const problems = await db.select().from(Problem)
@@ -186,6 +273,30 @@ export const getAllProblems = asyncHandler(async(req: Request, res: Response) =>
  * @param {string} id
  * @route GET /api/v1/get-problem/:id
  * @access Public
+ */
+
+/**
+ * @openapi
+ * /problems/get-problem/{id}:
+ *   get:
+ *     summary: Get a problem by ID
+ *     description: Returns a problem with the specified ID.
+ *     tags:
+ *       - Problem
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the problem to retrieve.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Problem fetched successfully.
+ *       '404':
+ *         description: Not Found - Problem not found.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const getProblemById = asyncHandler(async(req: Request, res: Response) => {
     const { id } = req.params
@@ -215,6 +326,83 @@ export const getProblemById = asyncHandler(async(req: Request, res: Response) =>
  * examples: object[], testCases: object[], codeSnippets: object[], referenceSolution: object[] }
  * @route PUT /api/v1/update-problem/:id
  * @access Private only admin can access
+ */
+
+/**
+ * @openapi
+ * /problems/update-problem/{id}:
+ *   put:
+ *     summary: Update a problem by ID
+ *     description: Updates a problem with the specified ID.
+ *     tags:
+ *       - Problem
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the problem to update.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               difficulty:
+ *                 type: string
+ *               tags:
+ *                 type: array
+ *                 items:   
+ *                   type: string
+ *               constraints:
+ *                 type: string
+ *               examples:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     input:
+ *                       type: string
+ *                     output:
+ *                       type: string
+ *               testCases:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     input:
+ *                       type: string
+ *                     output:
+ *                       type: string
+ *               codeSnippets:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     language:
+ *                       type: string
+ *                     code:
+ *                       type: string
+ *               referenceSolution:
+ *                 type: object
+ *                 properties:
+ *                   language:
+ *                     type: string
+ *                   code:
+ *                     type: string
+ *     responses:
+ *       '200':
+ *         description: Problem updated successfully.
+ *       '404':
+ *         description: Not Found - Problem not found.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const updateProblemById = asyncHandler(async(req: Request, res: Response) => {
     const { id } = req.params
@@ -279,6 +467,29 @@ export const updateProblemById = asyncHandler(async(req: Request, res: Response)
  * @route DELETE /api/v1/delete-problem/:id
  * @access Private only admin can access
  */
+
+/**
+ * @openapi
+ * /problems/delete-problem/{id}:
+ *   delete:
+ *     summary: Delete a problem by ID
+ *     description: Deletes a problem with the specified ID.
+ *     tags:
+ *       - Problem
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the problem to delete.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Problem deleted successfully.
+ *       '404':
+ *         description: Not Found - Problem not found.
+ *       '500':
+ */
 export const deleteProblemById = asyncHandler(async(req: Request, res: Response) => {
     const { id } = req.params
 
@@ -311,6 +522,27 @@ export const deleteProblemById = asyncHandler(async(req: Request, res: Response)
  * @description get all problems solved by user
  * @route GET /api/v1/get-all-problems-solved-by-user
  * @access Private only logged in user can access
+ */
+
+/**
+ * @openapi
+ * /problems/get-solved-problems:
+ *   get:
+ *     summary: Get all problems solved by the user
+ *     description: Returns a list of problems solved by the authenticated user.
+ *     tags:
+ *       - Problem
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Problems fetched successfully.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '404':
+ *         description: Not Found - User not found.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const getAllProblemsSolvedByUser = asyncHandler(async(req: Request, res: Response) => {
     // get the user id from the request

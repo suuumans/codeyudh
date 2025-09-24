@@ -94,11 +94,11 @@ export const createPlaylist = asyncHandler(async (req: Request, res: Response) =
 
 /**
  * @openapi
- * /playlist/get-all-lists:
+ * /playlist:
  *   get:
  *     tags:
  *       - Playlist
- *     summary: Get all playlist
+ *     summary: Get all user playlists
  *     description: Returns a list of all playlists for the authenticated user.
  *     security:
  *       - bearerAuth: []
@@ -135,7 +135,7 @@ export const getAlllistDetails = asyncHandler(async (req: Request, res: Response
 
 /**
  * @openapi
- * /playlist/get-playlist/{playlistId}:
+ * /playlist/{playlistId}:
  *   get:
  *     tags:
  *       - Playlist
@@ -218,7 +218,7 @@ export const getPlayListDetails = asyncHandler(async (req: Request, res: Respons
 
 /**
  * @openapi
- * /playlist/add-problem-to-playlist:
+ * /playlist/{playlistId}/add-problem:
  *   post:
  *     tags:
  *       - Playlist
@@ -226,6 +226,13 @@ export const getPlayListDetails = asyncHandler(async (req: Request, res: Respons
  *     description: Adds a problem to a playlist for the authenticated user.
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - name: playlistId
+ *         in: path
+ *         required: true
+ *         description: The ID of the playlist to add the problem to.
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -233,9 +240,6 @@ export const getPlayListDetails = asyncHandler(async (req: Request, res: Respons
  *           schema:
  *             type: object
  *             properties:
- *               playlistId:
- *                 type: string
- *                 description: ID of the playlist to add the problem to.
  *               problemId:
  *                 type: string
  *                 description: ID of the problem to add to the playlist.
@@ -430,7 +434,7 @@ export const deletePlaylist = asyncHandler(async (req: Request, res: Response) =
  *       '500':
  *         description: Internal Server Error.
  */
-export const rempveProblemFromPlaylist = asyncHandler(async (req: Request, res: Response) => {
+export const removeProblemFromPlaylist = asyncHandler(async (req: Request, res: Response) => {
     const { playlistId } = req.params
     if (!playlistId) {
         throw new ApiError(400, "Playlist id is required!")

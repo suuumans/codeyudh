@@ -14,6 +14,38 @@ import { Problem } from "../db/schema/problem.schema.ts";
  * @route POST /api/v1/playlist/create-playlist
  * @access Private only logged in user can access
  */
+
+/**
+ * @openapi
+ * /playlist/create-playlist:
+ *   post:
+ *     tags:
+ *       - Playlist
+ *     summary: Create playlist
+ *     description: Creates a new playlist for the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       '201':
+ *         description: Playlist created successfully.
+ *       '400':
+ *         description: Bad Request - Playlist with same name already exists.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const createPlaylist = asyncHandler(async (req: Request, res: Response) => {
     const { name, description } = req.body
     const userId = req.user?.id
@@ -59,6 +91,25 @@ export const createPlaylist = asyncHandler(async (req: Request, res: Response) =
  * @route GET /api/v1/playlist/get-all-lists
  * @access Private only logged in user can access
  */
+
+/**
+ * @openapi
+ * /playlist/get-all-lists:
+ *   get:
+ *     tags:
+ *       - Playlist
+ *     summary: Get all playlist
+ *     description: Returns a list of all playlists for the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Playlists fetched successfully.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const getAlllistDetails = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?.id
     if (!userId) {
@@ -80,6 +131,34 @@ export const getAlllistDetails = asyncHandler(async (req: Request, res: Response
  * @headers { Authorization: Bearer <access_token> }
  * @route GET /api/v1/playlist/get-playlist/:playlistId
  * @access Private only logged in user can access
+ */
+
+/**
+ * @openapi
+ * /playlist/get-playlist/{playlistId}:
+ *   get:
+ *     tags:
+ *       - Playlist
+ *     summary: Get playlist details
+ *     description: Returns the details of a specific playlist for the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: playlistId
+ *         in: path
+ *         description: ID of the playlist to retrieve.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Playlist details fetched successfully.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '404':
+ *         description: Not Found - Playlist not found or you don't have access to this playlist.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const getPlayListDetails = asyncHandler(async (req: Request, res: Response) => {
     // get the user Id & playlist id from the request
@@ -135,6 +214,42 @@ export const getPlayListDetails = asyncHandler(async (req: Request, res: Respons
  * @headers { Authorization: Bearer <access_token> }
  * @route POST /api/v1/playlist/add-problem-to-playlist
  * @access Private only logged in user can access
+ */
+
+/**
+ * @openapi
+ * /playlist/add-problem-to-playlist:
+ *   post:
+ *     tags:
+ *       - Playlist
+ *     summary: Add problem to playlist
+ *     description: Adds a problem to a playlist for the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               playlistId:
+ *                 type: string
+ *                 description: ID of the playlist to add the problem to.
+ *               problemId:
+ *                 type: string
+ *                 description: ID of the problem to add to the playlist.
+ *     responses:
+ *       '200':
+ *         description: Problem added to playlist successfully.
+ *       '400':
+ *         description: Bad Request - Playlist id or problem id is required.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '404':
+ *         description: Not Found - Playlist not found or you don't have access to this playlist.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const addProblemToPlaylist = asyncHandler(async (req: Request, res: Response) => {
     const { playlistId } = req.params
@@ -199,6 +314,34 @@ export const addProblemToPlaylist = asyncHandler(async (req: Request, res: Respo
  * @route DELETE /api/v1/playlist/:playlistId
  * @access Private only logged in user can access
  */
+
+/**
+ * @openapi
+ * /playlist/{playlistId}:
+ *   delete:
+ *     tags:
+ *       - Playlist
+ *     summary: Delete playlist
+ *     description: Deletes a playlist for the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: playlistId
+ *         in: path
+ *         description: ID of the playlist to delete.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Playlist deleted successfully.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '404':
+ *         description: Not Found - Playlist not found or you don't have access to this playlist.
+ *       '500':
+ *         description: Internal Server Error.
+ */
 export const deletePlaylist = asyncHandler(async (req: Request, res: Response) => {
     const { playlistId } = req.params
     if(!playlistId){
@@ -244,6 +387,48 @@ export const deletePlaylist = asyncHandler(async (req: Request, res: Response) =
  * @headers { Authorization: Bearer <access_token> }
  * @route DELETE /api/v1/playlist/:playlistId/remove-problem
  * @access Private only logged in user can access
+ */
+
+/**
+ * @openapi
+ * /playlist/{playlistId}/remove-problem:
+ *   delete:
+ *     tags:
+ *       - Playlist
+ *     summary: Remove problem from playlist
+ *     description: Removes a problem from a playlist for the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: playlistId
+ *         in: path
+ *         description: ID of the playlist to remove the problem from.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - problemId
+ *             properties:
+ *               problemId:
+ *                 type: string
+ *                 description: ID of the problem to remove from the playlist.
+ *     responses:
+ *       '200':
+ *         description: Problem removed from playlist successfully.
+ *       '400':
+ *         description: Bad Request - Playlist id is required.
+ *       '401':
+ *         description: Unauthorized - User not authenticated.
+ *       '404':
+ *         description: Not Found - Playlist not found or you don't have access to this playlist.
+ *       '500':
+ *         description: Internal Server Error.
  */
 export const rempveProblemFromPlaylist = asyncHandler(async (req: Request, res: Response) => {
     const { playlistId } = req.params

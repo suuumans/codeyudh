@@ -3,12 +3,19 @@
   "module": "index.ts",
   "version": "0.0.1",
   "scripts": {
-    "start": "nodemon --exec bun run src/index.ts"
+    "start": "nodemon --exec bun run src/index.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:unit": "bun test src/**/*.test.ts",
+    "test:integration": "bun test src/**/*.integration.test.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cookie-parser": "^1.4.8",
+    "@types/node": "^24.7.0",
     "@types/nodemailer": "^6.4.17",
+    "@types/supertest": "^6.0.3",
+    "supertest": "^7.1.4",
     "ts-node": "^10.9.2"
   },
   "peerDependencies": {
@@ -28,6 +35,7 @@
     "drizzle-kit": "^0.31.1",
     "drizzle-orm": "^0.43.1",
     "express": "^5.1.0",
+    "iovalkey": "^0.3.3",
     "jsonwebtoken": "^9.0.2",
     "mailgen": "^2.0.29",
     "nodemailer": "^7.0.2",

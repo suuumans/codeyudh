@@ -8,6 +8,7 @@ import { ApiResponse } from "../utils/apiResponse.ts";
 import { ApiError } from "../utils/apiError.ts";
 import { getJudge0LanguageId, pollBatchResults, submitBatch, type Judge0Submission } from "../utils/judge0.ts";
 import { UserProblems } from "../db/schema/userProblem.schema.ts";
+import { valkey } from "../utils/valkey.ts";
 
 
 
@@ -215,6 +216,10 @@ export const createProblem = asyncHandler(async(req: Request, res: Response) => 
                 newProblemData as NewProblemType
             ).returning()
 
+            // Invalidate the cache since the new problem has been created
+            await valkey.del("problems:all");
+            console.log("✅ Cache invalidated for 'problems:all'");
+
             // return response
             return res.status(201).json(
                 new ApiResponse(201, true, "Problem created successfully", newProblem[0])
@@ -253,15 +258,31 @@ export const createProblem = asyncHandler(async(req: Request, res: Response) => 
  */
 export const getAllProblems = asyncHandler(async(req: Request, res: Response) => {
     try {
-        const problems = await db.select().from(Problem)
-        if(!problems){
-            throw new ApiError(404, "Problems not found!")
+        const cacheKey = "problems:all";
+  
+        // 1. Check the cache first
+        console.log(`🔍 Checking cache for key: ${cacheKey}`);
+        const cachedProblems = await valkey.get(cacheKey);
+    
+        if (cachedProblems) {
+            console.log("✅ Cache Hit! Returning data from Valkey.");
+            const problems = JSON.parse(cachedProblems);
+            return res.status(200).json(
+                new ApiResponse(200, true, "Problems fetched from cache", problems)
+            );
         }
-
-        // return response
+    
+        // 2. If cache miss, fetch from the database
+        console.log("❌ Cache Miss! Fetching from the database.");
+        const allProblems = await db.select().from(Problem);
+    
+        // 3. Store the result in the cache for next time (e.g., for 1 hour)
+        await valkey.set(cacheKey, JSON.stringify(allProblems), "EX", 3600);
+        console.log(`💾 Saved to cache. Will expire in 1 hour.`);
+    
         return res.status(200).json(
-            new ApiResponse(200, true, "Problems fetched successfully", problems)
-        )
+            new ApiResponse(200, true, "Problems fetched from database", allProblems)
+        );
     } catch (error) {
         console.error("Error fetching problems:", error);
         throw new ApiError(500, "Internal server error while fetching problems");
@@ -450,6 +471,9 @@ export const updateProblemById = asyncHandler(async(req: Request, res: Response)
             throw new ApiError(500, "Failed to update problem. Please try again later!")
         }
 
+        // Invalidate the cache since a problem has been updated
+        await valkey.del("problems:all");
+
         // return response
         return res.status(201).json(
             new ApiResponse(201, true, "Problem updated successfully", updatedProblem[0])
@@ -507,6 +531,9 @@ export const deleteProblemById = asyncHandler(async(req: Request, res: Response)
         if(!deletedProblem || deletedProblem.length === 0){
             throw new ApiError(500, "Failed to delete problem. Please try again later!")
         }
+
+        // Invalidate the cache since a problem has been deleted
+        await valkey.del("problems:all");
 
         // return response
         return res.status(201).json(

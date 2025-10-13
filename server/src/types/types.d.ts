@@ -8,6 +8,8 @@ declare global {
         id: string;
         email: string;
         username: string;
+        isEmailVerified: boolean;
+        role: "ADMIN" | "USER";
       };
     }
   }

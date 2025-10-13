@@ -6,6 +6,7 @@ import { Playlist, ProblemInPlaylist } from "../db/schema/playlist.schema.ts";
 import { ApiResponse } from "../utils/apiResponse.ts";
 import { and, eq } from "drizzle-orm";
 import { Problem } from "../db/schema/problem.schema.ts";
+import { valkey } from "../utils/valkey.ts";
 
 
 /**
@@ -75,6 +76,10 @@ export const createPlaylist = asyncHandler(async (req: Request, res: Response) =
             userId
         }).returning()
 
+        // Invalidate the cache as a new playlist has been created
+        valkey.del("playlists")
+        console.log("✅ Playlist cache invalidated successfully!")
+
         // return response
         return res.status(201).json(
             new ApiResponse(201, true, "Playlist created successfully", playlist)
@@ -115,8 +120,24 @@ export const getAlllistDetails = asyncHandler(async (req: Request, res: Response
     if (!userId) {
         throw new ApiError(401, "Unauthorized request - user id not found")
     }
+
     try {
+        const cacheKey = "playlists"
+        // check the cache first
+        const cachedPlaylists = await valkey.get(cacheKey)
+        if (cachedPlaylists) {
+            console.log("✅ Playlist cache hit!")
+            const playlist = JSON.parse(cachedPlaylists)
+            return res.status(200).json(
+                new ApiResponse(200, true, "Playlist fetched successfully", playlist))
+        }
+
+        // if cache miss, fetch from the database
         const playlist = await db.select().from(Playlist).where(eq(Playlist.userId, userId))
+
+        // set the playlist data in the cache for the next request (e.g., for 1 hour)
+        await valkey.set(cacheKey, JSON.stringify(playlist), "EX", 3600)
+
         return res.status(200).json(
             new ApiResponse(200, true, "Playlist fetched successfully", playlist)
         )
@@ -171,7 +192,18 @@ export const getPlayListDetails = asyncHandler(async (req: Request, res: Respons
         throw new ApiError(400, "Playlist id is required!")
     }
 
+    const cacheKey = `playlist:${playlistId}`
+
     try {
+        // check the cache first
+        const cachedPlaylist = await valkey.get(cacheKey)
+        if (cachedPlaylist) {
+            console.log("✅ Playlist cache hit!")
+            const playlist = JSON.parse(cachedPlaylist)
+            return res.status(200).json(
+                new ApiResponse(200, true, "Playlist fetched successfully", JSON.parse(cachedPlaylist)))
+        }
+
         // find playlist with the given id
         const playlist = await db.select().from(Playlist)
             .where(
@@ -195,13 +227,14 @@ export const getPlayListDetails = asyncHandler(async (req: Request, res: Respons
         // const problems = PlaylistProblems.map((ProblemInPlaylist) => ProblemInPlaylist.problems)
         const problems = PlaylistProblems.map((joinResult) => joinResult.problems)
 
+        const responseData = { playlist: playlist[0], problems }
+
+        // set the result in the cache for the future requests (e.g., for 1 hour
+        await valkey.set(cacheKey, JSON.stringify({ responseData }), "EX", 3600)
+
         // return response
         return res.status(200).json(
-            new ApiResponse(200, true, "Playlist details fetched successfully",
-                { 
-                    playlist:playlist[0],
-                    problems 
-                })
+            new ApiResponse(200, true, "Playlist details fetched successfully", responseData)
         )
     } catch (error) {
         console.error("Error fetching playlist: ", error)
@@ -302,6 +335,9 @@ export const addProblemToPlaylist = asyncHandler(async (req: Request, res: Respo
             problemId,
         }).returning();
 
+        // Invalidate the cache as new problem has been added to playlist
+        await valkey.del("playlists")
+
         // return response
         return res.status(200).json(
             new ApiResponse(200, true, "Problem added to playlist successfully", result)
@@ -375,6 +411,9 @@ export const deletePlaylist = asyncHandler(async (req: Request, res: Response) =
         // delete playlist
         const deletedPlaylist = await db.delete(Playlist).where(eq(Playlist.id, playlistId)).returning()
 
+        // Invalidate the cache as a playlist has been deleted
+        await valkey.del("playlists")
+        
         // return response
         return res.status(200).json(
             new ApiResponse(200, true, "Playlist deleted successfully", deletedPlaylist)
@@ -470,6 +509,9 @@ export const removeProblemFromPlaylist = asyncHandler(async (req: Request, res: 
                 eq(ProblemInPlaylist.problemId, problemId)
             )
         ).returning()
+
+        // Invalidate the cache as a playlist has been updated
+        await valkey.del("playlists")
 
         // return response
         return res.status(200).json(

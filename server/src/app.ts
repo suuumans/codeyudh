@@ -31,7 +31,6 @@ app.use("/api/v1/contest", contestRouter)
 app.get('/test', (req, res) => {
     res.send('Server is working just fine! :)');
 });
-  
 
 setupSwagger(app);
 

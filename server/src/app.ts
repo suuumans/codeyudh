@@ -8,6 +8,7 @@ import submissions from './routes/submission.route.ts';
 import playlist from './routes/playlist.route.ts';
 import contestRouter from './routes/contest.route.ts';
 import { setupSwagger } from './utils/swagger.ts';
+import aiRouter from './routes/ai.route.ts';
 
 const app = express()
 
@@ -27,6 +28,7 @@ app.use("/api/v1/execute-code", executeCode)
 app.use("/api/v1/submission", submissions)
 app.use("/api/v1/playlist", playlist)
 app.use("/api/v1/contest", contestRouter)
+app.use("/api/v1/ai", aiRouter)
 
 app.get('/test', (req, res) => {
     res.send('Server is working just fine! :)');

@@ -1,15 +1,17 @@
 
-import { date, pgTable, text, unique, uuid } from "drizzle-orm/pg-core";
+import { date, pgTable, text, unique, uuid, boolean } from "drizzle-orm/pg-core";
 import { User } from "./user.schema.ts";
 import { relations } from "drizzle-orm";
 import { Problem } from "./problem.schema.ts";
-
+import { Payment } from "./payment.schema.ts";
+import { UserPlaylistAccess } from "./userPlaylistAccess.schema.ts";
 
 
 export const Playlist = pgTable("playlists", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
     description: text("description"),
+    isPaid: boolean("is_paid").notNull().default(false),
     userId: uuid("user_id").notNull().references(() => User.id, { onDelete: 'cascade' }),
     createdAt: date("created_at"),
     updatedAt: date("updated_at"),
@@ -30,8 +32,10 @@ export const ProblemInPlaylist = pgTable("problem_in_playlist", {
 ])
 
 // relations
-export const playlistRelations = relations(Playlist, ({ many }) => ({
-    problemsInPlaylist: many(ProblemInPlaylist)
+export const playlistRelations = relations(Playlist, ({ many, one }) => ({
+    problemsInPlaylist: many(ProblemInPlaylist),
+    payments: many(Payment),
+    userAccess: many(UserPlaylistAccess)
 }));
 
 export const problemInPlaylistRelations = relations(ProblemInPlaylist, ({ one }) => ({

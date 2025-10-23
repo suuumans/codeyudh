@@ -3,6 +3,7 @@ import { relations } from "drizzle-orm";
 import { pgTable, uuid, varchar, pgEnum, timestamp, boolean, text, index } from "drizzle-orm/pg-core";
 import { Problem } from "./problem.schema.ts";
 import { UserProblems } from "./userProblem.schema.ts";
+import { UserPlaylistAccess } from "./userPlaylistAccess.schema.ts";
 
 // This is the schema for the roles enum
 export const rolesEnum = pgEnum("roles", ["ADMIN", "USER"]);
@@ -43,4 +44,6 @@ export const usersRelations = relations(User, ({ many }) => ({
 
   // many to many:  User is linked to many Problems via UserProblems
   UserProblemLinks: many(UserProblems),
+
+  playlistAccess: many(UserPlaylistAccess)
 }));

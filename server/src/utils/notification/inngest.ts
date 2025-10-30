@@ -1,6 +1,6 @@
 import { EventSchemas, Inngest } from "inngest";
-import { notificationEventSchemas } from "./notification.events";
-import type { NotificationEvents } from "./notification.events";
+import { notificationEventSchemas } from "./notification.validators";
+import type { NotificationEvents } from "./notification.validators";
 
 // Re-export the event types so they can be used by the Inngest client.
 export type Events = NotificationEvents;

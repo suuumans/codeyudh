@@ -10,6 +10,7 @@ import { razorpay } from "../utils/razorpay.ts";
 import { Playlist } from "../db/schema/playlist.schema.ts";
 import crypto from "crypto";
 import { UserPlaylistAccess } from "../db/schema/userPlaylistAccess.schema.ts";
+import { inngest } from "../utils/notification/inngest.ts";
 
 
 /**
@@ -114,10 +115,15 @@ export const verifyPayment = asyncHandler(async (req: Request, res: Response) =>
 
     // verify the payment signature
     const body = razorpay_order_id + "|" + razorpay_payment_id
-    const expectedSignature = crypto.createHmac(
-        "sha256",
-        process.env.RAZORPAY_KEY_SECRET as string
-    ).update(body.toString()).digest("hex")
+
+    // const expectedSignature = crypto.createHmac(
+    //     "sha256",
+    //     process.env.RAZORPAY_KEY_SECRET as string
+    // ).update(body.toString()).digest("hex")
+
+    // using bun crypto hasher
+    const expectedSignature = new Bun.CryptoHasher("sha256", process.env.RAZORPAY_KEY_SECRET)
+        .update(body.toString()).digest("hex")
 
     const isAuthentic = expectedSignature === razorpay_signature
 
@@ -180,6 +186,18 @@ export const verifyPayment = asyncHandler(async (req: Request, res: Response) =>
         grantedAt: new Date()
     }).onConflictDoNothing() // in case user already has access
 
+    // Send an event to Inngest to create a notification
+    const playlistDetails = await db.select({ name: Playlist.name }).from(Playlist).where(eq(Playlist.id, playlistId)).limit(1);
+    await inngest.send({
+        name: "payment.succeeded",
+        data: {
+            userId,
+            playlistId,
+            playlistName: playlistDetails[0]?.name || "a playlist",
+            // Construct a URL to the playlist page on your frontend
+            linkUrl: `/playlist/${playlistId}`,
+        }
+    });
 
     res.status(200).json(
         new ApiResponse(200, true, "Payment verified successfully and access granted", paymentRecord[0] )

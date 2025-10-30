@@ -210,6 +210,7 @@ import { getLanguageNmae, pollBatchResults, submitBatch } from "../utils/judge0.
 import { Submission } from "../db/schema/submission.schema.ts";
 import { ProblemSolved } from "../db/schema/problemSolved.schema.ts";
 import { TestCaseResult } from "../db/schema/testCaseResult.schema.ts";
+import { inngest } from "../utils/notification/inngest.ts";
 
 // Define proper types for better type safety
 type NewSubmission = typeof Submission.$inferInsert;
@@ -464,6 +465,17 @@ export const executeCode = asyncHandler(async(req: Request, res: Response) => {
             .where(eq(Submission.id, submission.id))
             .limit(1);
 
+
+        await inngest.send({
+            name:"submission.accepted",
+            data: {
+                userId: submissionWithTestCase.userId,
+                problemId: submissionWithTestCase.problemId,
+                submissionId: submissionWithTestCase.id,
+                linkUrl: `/problems/${submissionWithTestCase.problemId}`,
+                problemTitle: "Problem Title", // You might want to fetch the actual problem title here
+            }
+        })
         // 10. Return response
         return res.status(200).json(
             new ApiResponse(200, true, "Code executed successfully", submissionWithTestCase)

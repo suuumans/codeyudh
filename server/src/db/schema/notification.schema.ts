@@ -18,6 +18,7 @@ export const Notification = pgTable("notifications", {
     // metadata can store relevant IDs like playlistId, problemId, etc.
     metadata: jsonb("metadata"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export type NotificationType = typeof Notification.$inferSelect;

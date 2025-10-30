@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { serve } from 'inngest/express';
 import authRouter from "./routes/auth.route";
 import problemRouter from "./routes/problem.route";
 import executeCode from './routes/executeCode.route.ts';
@@ -10,6 +11,8 @@ import contestRouter from './routes/contest.route.ts';
 import { setupSwagger } from './utils/swagger.ts';
 import aiRouter from './routes/ai.route.ts';
 import payment from './routes/payment.route.ts';
+import { inngest } from './utils/notification/inngest.ts';
+import { functions } from '../src/utils/notification/notification.handler.ts';
 
 const app = express()
 
@@ -32,6 +35,11 @@ app.use("/api/v1/contest", contestRouter)
 app.use("/api/v1/ai", aiRouter)
 app.use("/api/v1/payment", payment)
 
+
+// Set up the "/api/v1/inngest" routes with the serve handler
+app.use("/api/v1/inngest", serve({client: inngest, functions}));
+
+// Test route
 app.get('/test', (req, res) => {
     res.send('Server is working just fine! :)');
 });

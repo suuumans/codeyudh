@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     container_name: codeyudh-server
     environment:
-      - PORT=5050
+      - PORT=3000
       - DB_URI=${DB_URI} # Set your Neon.tech URI in a .env file or CI/CD secret
       - CORS_ORIGIN=${FRONTEND_URL}
       - BUN_ENV=production
@@ -15,11 +15,11 @@ services:
       - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
       - REFRESH_TOKEN_EXPIRY=${REFRESH_TOKEN_EXPIRY}
       - FRONTEND_URL=${FRONTEND_URL}
-      - JUDGE0_API_URL=${JUDGE0_API_URL} 
+      - JUDGE0_API_URL=${JUDGE0_API_URL}
       - JUDGE0_API_KEY=${JUDGE0_API_KEY}
       - VALKEY_URL=valkey://valkey:6379
     ports:
-      - "5050:5050"
+      - "3000:3000"
     networks:
       - codeyudh-network
     restart: unless-stopped

@@ -21,7 +21,7 @@ RUN addgroup -g 1001 -S nodejs \
     && chown -R bun:nodejs /app
 USER bun
 
-EXPOSE 5050
+EXPOSE 3000
 
 # Start the application
 CMD ["bun", "run", "src/index.ts"]

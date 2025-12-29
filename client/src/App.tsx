@@ -49,6 +49,7 @@ function App() {
             <Route path="/add-problem" element={<AddProblem />} />
             <Route path="/create-contest" element={<CreateContestPage />} />
           </Route>
+          <Route path="/problems" element={authUser ? <ProblemPage /> : <Navigate to="/login" />} />
           <Route path="/sheets" element={authUser ? <SheetsPage /> : <Navigate to="/login" />} />
           <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
           <Route path="/contest" element={authUser ? <ContestPage1 /> : <Navigate to="/login" />} />

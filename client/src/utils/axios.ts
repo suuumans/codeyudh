@@ -23,6 +23,11 @@ const getBaseURL = () => {
   if (import.meta.env.MODE === 'development') {
     return 'http://localhost:5050/api/v1';
   }
+
+  // in production, use the production server port
+  if (import.meta.env.MODE === 'production') {
+    return 'https://codeyudh.onrender.com/api/v1';
+  }
   
   // In production, use relative URL so it works with any domain
   return '/api/v1';

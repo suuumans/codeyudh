@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "scripts": {
     "build": "bun build ./src/index.ts --outdir ./dist --target bun",
-    "start": "nodemon --exec bun run src/index.ts",
+    "dev": "nodemon --exec bun run src/index.ts",
+    "start": "bun run src/index.ts",
     "test": "bun test",
     "test:watch": "bun test --watch",
     "test:unit": "bun test src/**/*.test.ts",

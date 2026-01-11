@@ -29,8 +29,8 @@ const LandingPage: React.FC = () => {
          style={{ fontFamily: '"Space Grotesk", "Noto Sans", sans-serif' }}>
       <div className="layout-container flex h-full grow flex-col">
         {/* Navigation Header */}
-        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#29382f] px-10 py-3">
-          <div className="flex items-center gap-4 text-white">
+        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#29382f] px-3 sm:px-6 md:px-10 py-3">
+          <div className="flex items-center gap-2 sm:gap-4 text-white shrink-0">
             <div className="size-4">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -45,15 +45,15 @@ const LandingPage: React.FC = () => {
                 ></path>
               </svg>
             </div>
-            <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em]">CodeYudh</h2>
+            <h2 className="hidden sm:block text-white text-lg font-bold leading-tight tracking-[-0.015em]">CodeYudh</h2>
           </div>
-          <div className="flex flex-1 justify-end gap-8">
-            <div className="flex items-center gap-9">
-              <Link to="/home" className="text-white text-sm font-medium leading-normal">Problems</Link>
-              <Link to="/contest" className="text-white text-sm font-medium leading-normal">Contests</Link>
+          <div className="flex flex-1 justify-end gap-2 sm:gap-4 md:gap-8">
+            <div className="flex items-center gap-3 sm:gap-5 md:gap-9">
+              <Link to="/home" className="text-white text-xs sm:text-sm font-medium leading-normal">Problems</Link>
+              <Link to="/contest" className="text-white text-xs sm:text-sm font-medium leading-normal">Contests</Link>
               <Link 
                 to="/profile" 
-                className="text-white text-sm font-medium leading-normal"
+                className="text-white text-xs sm:text-sm font-medium leading-normal"
                 onClick={handleProfileClick}
               >
               Profile
@@ -61,8 +61,7 @@ const LandingPage: React.FC = () => {
             </div>
             <button
               onClick={handleGetStarted}
-              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#38e07b] text-[#111714] text-sm font-bold leading-normal tracking-[0.015em]"
-
+              className="flex min-w-[60px] sm:min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 sm:h-10 px-2 sm:px-4 bg-[#38e07b] text-[#111714] text-xs sm:text-sm font-bold leading-normal tracking-[0.015em]"
             >
               <span className="truncate">Get Started</span>
             </button>
@@ -70,7 +69,7 @@ const LandingPage: React.FC = () => {
         </header>
 
         {/* Main Content */}
-        <div className="px-40 flex flex-1 justify-center py-5">
+        <div className="px-4 sm:px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
           <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
             <div className="@container">
               <div className="@[480px]:p-4">
@@ -82,7 +81,7 @@ const LandingPage: React.FC = () => {
                 >
                   <div className="flex flex-col gap-2 text-center">
                     <h1
-                      className="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-5xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]"
+                      className="text-white text-2xl sm:text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-5xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]"
                     >
                       Sharpen Your Coding Skills with CodeYudh
                     </h1>
@@ -179,7 +178,7 @@ const LandingPage: React.FC = () => {
                 <Link to="/contact" className="text-[#9eb7a8] text-base font-normal leading-normal min-w-40">Contact</Link>
                 <Link to="/privacy" className="text-[#9eb7a8] text-base font-normal leading-normal min-w-40">Privacy Policy</Link>
               </div>
-              <p className="text-[#9eb7a8] text-base font-normal leading-normal">© 2025 CodeYudh. All rights reserved.</p>
+              <p className="text-[#9eb7a8] text-base font-normal leading-normal">© 2026 CodeYudh. All rights reserved.</p>
             </footer>
           </div>
         </footer>

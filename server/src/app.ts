@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import hpp from 'hpp';
 import { serve } from 'inngest/express';
 import authRouter from "./routes/auth.route";
 import problemRouter from "./routes/problem.route";
@@ -13,8 +15,13 @@ import aiRouter from './routes/ai.route.ts';
 import payment from './routes/payment.route.ts';
 import { inngest } from './utils/notification/inngest.ts';
 import { functions } from '../src/utils/notification/notification.handler.ts';
+import { sanitizeMiddleware } from './middlewares/sanitize.middleware.ts';
 
 const app = express()
+
+// Security Middleware
+app.use(helmet()); // Set various HTTP headers for security
+app.use(hpp()); // Protect against HTTP Parameter Pollution attacks
 
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
@@ -23,8 +30,15 @@ app.use(cors({
   allowedHeaders: ["content-type", "Authorization"]
 }));
 
+// Set Permissions-Policy header to remove browser warnings
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  next();
+});
+
 app.use(cookieParser())
 app.use(express.json())
+app.use(sanitizeMiddleware) // Sanitize all incoming requests to prevent XSS
 
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/problems", problemRouter)

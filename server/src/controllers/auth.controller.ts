@@ -1092,10 +1092,17 @@ export const getAllProblemsSolvedByUser = asyncHandler(async (req: Request, res:
  */
 export const checkAuth = asyncHandler(async(req: Request, res: Response) => {
     try {
-        const data = req.user?.isEmailVerified || req.user;
+        // If user is authenticated (token was valid), return user data
+        if (req.user) {
+            const data = req.user?.isEmailVerified || req.user;
+            return res.status(200).json(
+                new ApiResponse(200, true, "User is authenticated and verified", data)
+            );
+        }
+        // If no user, they are not authenticated - return null
         return res.status(200).json(
-            new ApiResponse(200, true, "User is authenticated and verified", data)
-        )
+            new ApiResponse(200, false, "User is not authenticated", null)
+        );
     } catch (error) {
         console.error('Error checking authentication:', error);
         throw new ApiError(500, "Internal server error while checking authentication");

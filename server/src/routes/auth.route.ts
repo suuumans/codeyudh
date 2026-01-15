@@ -29,10 +29,10 @@ router.post('/resend-verification-email', validate(resendVerificationEmailSchema
 router.post('/forgot-password',validate(forgotPasswordSchema), forgotPassword);
 router.post('/reset-password', resetPassword);
 router.post('/refresh-access-token', refreshAccessToken); // This can be public but needs a cookie
+router.get('/check-auth', checkAuth); // Public route - allows checking auth status without token
 
 // ----------- Private routes -----------
 router.use(verifyJWT);
-router.get('/check-auth', checkAuth);
 router.post('/logout', logoutUser);
 router.get('/profile', getUserProfile);
 router.patch('/update-profile', updateUserProfile); // PATCH for partial updates

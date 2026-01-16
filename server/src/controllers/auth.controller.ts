@@ -210,6 +210,8 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const cookieOptions = {
         httpOnly: true,
         secure: process.env.BUN_ENV === "production",
+        sameSite: "lax" as const,
+        path: "/"
     };
 
     // set cookies
@@ -1092,18 +1094,30 @@ export const getAllProblemsSolvedByUser = asyncHandler(async (req: Request, res:
  */
 export const checkAuth = asyncHandler(async(req: Request, res: Response) => {
     try {
-        // If user is authenticated (token was valid), return user data
-        if (req.user) {
-            const data = req.user?.isEmailVerified || req.user;
+        // Extract token from cookies or Authorization header
+        const token = req.cookies?.accessToken ?? req.headers?.authorization?.replace("Bearer ", "");
+        
+        // If no token, user is not authenticated
+        if (!token) {
             return res.status(200).json(
-                new ApiResponse(200, true, "User is authenticated and verified", data)
+                new ApiResponse(200, false, "User is not authenticated", null)
             );
         }
-        // If no user, they are not authenticated - return null
+
+        // Verify token
+        const decodedPayload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as any;
+        
+        // If token is valid, return user data
         return res.status(200).json(
-            new ApiResponse(200, false, "User is not authenticated", null)
+            new ApiResponse(200, true, "User is authenticated", decodedPayload)
         );
     } catch (error) {
+        // Token is invalid or expired, user is not authenticated
+        if (error instanceof jwt.JsonWebTokenError || error instanceof jwt.TokenExpiredError) {
+            return res.status(200).json(
+                new ApiResponse(200, false, "User is not authenticated", null)
+            );
+        }
         console.error('Error checking authentication:', error);
         throw new ApiError(500, "Internal server error while checking authentication");
     }

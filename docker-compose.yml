@@ -18,6 +18,8 @@ services:
       - JUDGE0_API_URL=${JUDGE0_API_URL}
       - JUDGE0_API_KEY=${JUDGE0_API_KEY}
       - VALKEY_URL=valkey://valkey:6379
+    env_file:
+      - .env
     ports:
       - "3000:3000"
     networks:

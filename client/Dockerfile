@@ -1,5 +1,8 @@
 # Build stage (Bun for install/build, Node for Vite build)
-FROM oven/bun:1.1.13-alpine AS bunbase
+
+#FROM oven/bun:1.1.13-alpine AS bunbase
+# or
+FROM oven/bun:1.1.26-alpine AS bunbase
 
 WORKDIR /app
 

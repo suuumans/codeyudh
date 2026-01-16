@@ -31,14 +31,14 @@ const HomePage: React.FC = () => {
     )
   }
   return (
-    <div className='min-h-screen flex flex-col items-center mt-14 px-4'>
-      <div className='absolute top-16 left-0 w-1/3 h-1/3 bg-primary opacity-30 blur-3xl rounded-md bottom-9'>
+    <div className='min-h-screen flex flex-col items-center mt-14 px-4 pb-20'>
+      <div className='absolute top-16 left-0 w-2/3 md:w-1/3 h-1/3 bg-primary opacity-20 md:opacity-30 blur-3xl rounded-md bottom-9 -z-10'>
       </div>
-      <h1 className='text-4xl fonrt-extrabold z-10 text-center'>
+      <h1 className='text-3xl md:text-5xl font-extrabold z-10 text-center tracking-tight'>
         Welcome to <span className='text-primary'>codeyudh</span>
       </h1>
 
-      <p className='mt-4 text-center text-lg font-semibold text-gray-500 dark:text-gray-400 z-10'>
+      <p className='mt-4 text-center text-base md:text-lg font-medium text-gray-500 dark:text-gray-400 z-10 max-w-2xl px-2'>
         A Platform where coders can engage in "yudh" (war) - battling with code and challenging others.
       </p>
 

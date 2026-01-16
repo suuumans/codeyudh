@@ -1,5 +1,5 @@
 # Use latest Bun Alpine image for performance
-FROM oven/bun:1-alpine AS base
+FROM oven/bun:1.1.26-alpine AS base
 
 WORKDIR /app
 

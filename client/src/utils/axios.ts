@@ -13,19 +13,20 @@ import axios from 'axios';
 
 // Use environment-aware API configuration
 const getBaseURL = () => {
-  // Check for custom API URL from environment variables
-  const customApiUrl = import.meta.env.VITE_API_URL;
-  if (customApiUrl) {
-    return customApiUrl;
-  }
-  
   // In development, use localhost with the dev server port
   if (import.meta.env.MODE === 'development') {
     return 'http://localhost:3000/api/v1';
   }
 
+  // In production, use the API URL from environment variable
+  // On Vercel, set VITE_API_BASE_URL to your Render backend URL
+  // Example: https://codeyudh-server.onrender.com/api/v1
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  if (apiBaseUrl) {
+    return apiBaseUrl;
+  }
   
-  // In production, use relative URL so it works with any domain
+  // Fallback (shouldn't be needed on production if env var is set)
   return '/api/v1';
 };
 
@@ -48,6 +49,6 @@ axiosInstance.interceptors.response.use(
     }
     return Promise.reject(error);
   }
-);
+);;
 
 // export default axiosInstance;

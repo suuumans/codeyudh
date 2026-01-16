@@ -70,7 +70,7 @@ function reverseList(head) {
   }, [codeSnippets.length])
 
   return (
-    <div className="hidden lg:flex flex-col items-center justify-center bg-slate-900 text-white p-12 relative overflow-hidden">
+    <div className="hidden lg:flex flex-col items-center justify-center bg-[#111714] text-white p-12 relative overflow-hidden">
       {/* Animated code symbols in background */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-[10%] left-[15%] animate-pulse">
@@ -95,9 +95,9 @@ function reverseList(head) {
 
       <div className="z-10 max-w-md flex flex-col items-center">
         {/* Code editor mockup */}
-        <div className="w-full bg-slate-800 rounded-lg shadow-xl mb-8 overflow-hidden">
+        <div className="w-full bg-[#1c2620] rounded-lg shadow-xl mb-8 overflow-hidden border border-[#3d5245]">
           {/* Editor header */}
-          <div className="bg-slate-700 px-4 py-2 flex items-center">
+          <div className="bg-[#29382f] px-4 py-2 flex items-center">
             <div className="flex space-x-2 mr-4">
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -126,7 +126,7 @@ function reverseList(head) {
 
         {/* Text content */}
         <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
-        <p className="text-slate-300 text-center">{subtitle}</p>
+        <p className="text-[#9eb7a8] text-center">{subtitle}</p>
       </div>
     </div>
   )

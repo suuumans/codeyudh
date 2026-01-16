@@ -1,4 +1,4 @@
-import React from "react";
+
 import { User, Code, LogOut } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore.ts";
 import { Link } from "react-router-dom";
@@ -7,31 +7,32 @@ import LogoutButton from "./LogoutButton";
 
 const Navbar = () => {
 
-    const { authUser } = useAuthStore() as AuthStore
+  const { authUser } = useAuthStore() as AuthStore
 
-    return (
-        <nav className="sticky top-0 z-50 w-full py-5">
-      <div className="flex w-full justify-between mx-auto max-w-4xl bg-black/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-gray-200/10 p-4 rounded-2xl">
+  return (
+    <nav className="sticky top-0 z-50 w-full py-3 md:py-5 px-2 md:px-0">
+      <div className="flex w-full justify-between items-center mx-auto max-w-4xl bg-black/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-gray-200/10 px-3 py-2 sm:p-3 md:p-4 rounded-xl md:rounded-2xl">
         {/* Logo Section */}
-        <Link to="/" className="flex items-center gap-3 cursor-pointer">
-          {/* <img src="/leetlab.svg" className="h-18 w-18 bg-primary/20 text-primary border-none px-2 py-2 rounded-full" /> */}
-          <span className="text-lg md:text-2xl font-bold tracking-tight text-white hidden md:block">
+        <Link to="/" className="flex items-center gap-2 md:gap-3 cursor-pointer shrink-0">
+          {/* Mobile: Show code icon, Desktop: Show brand name */}
+          <Code className="w-5 h-5 sm:hidden text-primary" />
+          <span className="hidden sm:block text-lg md:text-2xl font-bold tracking-tight text-white">
           codeyudh
           </span>
         </Link>
 
         {/* Main Navigation Links */}
-        <div className="flex items-center gap-9">
-          <Link to="/home" className="text-white text-sm font-medium leading-normal">Problems</Link>
-          <Link to="/contest" className="text-white text-sm font-medium leading-normal">Contests</Link>
-          <Link to="/sheets" className="text-white text-sm font-medium leading-normal">Sheets</Link>
+        <div className="flex items-center gap-4 sm:gap-5 md:gap-9">
+          <Link to="/home" className="text-white text-xs sm:text-sm font-medium leading-normal whitespace-nowrap">Problems</Link>
+          {/* <Link to="/contest" className="text-white text-xs sm:text-sm font-medium leading-normal whitespace-nowrap">Contests</Link> */}
+          <Link to="/sheets" className="text-white text-xs sm:text-sm font-medium leading-normal whitespace-nowrap">Sheets</Link>
         </div>
 
         {/* User Profile and Dropdown */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-2 sm:gap-4 md:gap-8 shrink-0">
           <div className="dropdown dropdown-end">
-            <label tabIndex={0} className="btn btn-ghost btn-circle avatar flex flex-row ">
-              <div className="w-10 rounded-full ">
+            <label tabIndex={0} className="btn btn-ghost btn-circle avatar flex flex-row p-0">
+              <div className="w-8 sm:w-10 rounded-full">
                 <img
                   src={
                     authUser?.image ||
@@ -101,7 +102,7 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
-    )
+  )
 }
 
 

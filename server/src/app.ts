@@ -23,11 +23,17 @@ const app = express()
 app.use(helmet()); // Set various HTTP headers for security
 app.use(hpp()); // Protect against HTTP Parameter Pollution attacks
 
+// Configure CORS for production with multiple origins
+const corsOrigins = process.env.CORS_ORIGIN 
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  : ['http://localhost:5173'];
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: corsOrigins,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["content-type", "Authorization"]
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["content-type", "Authorization"],
+  optionsSuccessStatus: 200
 }));
 
 // Set Permissions-Policy header to remove browser warnings

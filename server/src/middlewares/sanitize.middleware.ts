@@ -17,12 +17,18 @@ export const sanitizeMiddleware = (
 
   // Sanitize query parameters
   if (req.query && typeof req.query === 'object') {
-    req.query = sanitizeObject(req.query);
+    const sanitizedQuery = sanitizeObject(req.query);
+    Object.keys(sanitizedQuery).forEach(key => {
+      req.query![key] = sanitizedQuery[key];
+    });
   }
 
-  // Sanitize URL parameters
+  // Sanitize URL parameters (params is readonly)
   if (req.params && typeof req.params === 'object') {
-    req.params = sanitizeObject(req.params);
+    const sanitizedParams = sanitizeObject(req.params);
+    Object.keys(sanitizedParams).forEach(key => {
+      req.params![key] = sanitizedParams[key];
+    });
   }
 
   next();

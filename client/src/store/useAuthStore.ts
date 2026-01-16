@@ -32,7 +32,7 @@ export const useAuthStore = create((set , _)=>({ // (set, get)
         // }
 
         try {
-            const res = await axiosInstance("/auth/check");
+            const res = await axiosInstance.get("/auth/check-auth");
             console.log("✅ checkAuth response:", res);
             console.log("Response structure:", {
                 fullResponse: res,

@@ -11,7 +11,7 @@ export const generateAuthTokens = async (user: {
     role: "ADMIN" | "USER";
 }) => {
     const payload = {
-        id: user.id,
+        userId: user.id,
         email: user.email,
         username: user.username,
         isEmailVerified: user.isEmailVerified,
@@ -20,7 +20,7 @@ export const generateAuthTokens = async (user: {
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET!, {
         expiresIn: "1d",
     });
-    const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET!, {
+    const refreshToken = jwt.sign({ userId: user.id }, process.env.REFRESH_TOKEN_SECRET!, {
         expiresIn: "7d",
     });
     return { accessToken, refreshToken };

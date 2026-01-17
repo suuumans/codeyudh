@@ -6,7 +6,7 @@ import { db } from "../db/db.ts";
 import { and, eq } from "drizzle-orm";
 import { Payment } from "../db/schema/payment.schema.ts";
 import { ApiResponse } from "../utils/apiResponse.ts";
-import { razorpay } from "../utils/razorpay.ts";
+import { getRazorpayInstance } from "../utils/razorpay.ts";
 import { Playlist } from "../db/schema/playlist.schema.ts";
 import crypto from "crypto";
 import { UserPlaylistAccess } from "../db/schema/userPlaylistAccess.schema.ts";
@@ -64,7 +64,8 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     }
 
     try {
-        const order = await razorpay.orders.create(options)
+        const razorpayInstance = getRazorpayInstance();
+        const order = await razorpayInstance.orders.create(options)
         // store the order in the database
         await db.insert(Payment).values({
             userId,
@@ -132,7 +133,8 @@ export const verifyPayment = asyncHandler(async (req: Request, res: Response) =>
     }
 
     // fetch payment details from Razorpay to double-check
-    const paymentDetails = await razorpay.payments.fetch(razorpay_payment_id)
+    const razorpayInstance = getRazorpayInstance();
+    const paymentDetails = await razorpayInstance.payments.fetch(razorpay_payment_id)
 
     // Verify payment is authorized/captured and matches out order
     if (paymentDetails.status !== "authorized" && paymentDetails.status !== "captured") {
@@ -154,7 +156,8 @@ export const verifyPayment = asyncHandler(async (req: Request, res: Response) =>
         }).where(eq(Payment.razorpayOrderId, razorpay_order_id)).returning()
         } else {
         // extract playlistId from order receipt
-        const orderDetails = await razorpay.orders.fetch(razorpay_order_id)
+        const razorpayInstance = getRazorpayInstance();
+        const orderDetails = await razorpayInstance.orders.fetch(razorpay_order_id)
         const receipt = typeof orderDetails.receipt === "string" ? orderDetails.receipt : ""
         const receiptParts = receipt.split(":")
         const extractedPlaylistId = receiptParts.length > 1 && receiptParts[1].trim() !== "" ? receiptParts[1].trim() : undefined

@@ -8,7 +8,7 @@ const openai = geminiApiKey ? new OpenAI({
 }) : null;
 
 if (!openai) {
-    console.warn("🚨 GEMINI_API_KEY is not set. AI features will be disabled.");
+    console.log("🚨 GEMINI_API_KEY is not set. AI features will be disabled.");
 }
 
 export interface ChatMessage {

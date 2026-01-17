@@ -116,10 +116,11 @@ export const createPlaylist = asyncHandler(async (req: Request, res: Response) =
  *         description: Internal Server Error.
  */
 export const getAlllistDetails = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id
-    if (!userId) {
+    if (!req.user?.id) {
         throw new ApiError(401, "Unauthorized request - user id not found")
     }
+
+    const userId = req.user?.id
 
     try {
         const cacheKey = "playlists"

@@ -207,10 +207,11 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     }).where(eq(User.id, user.id));
 
     // create cookie options
+    // For cross-domain cookies (Vercel to Render)
     const cookieOptions = {
         httpOnly: true,
-        secure: process.env.BUN_ENV === "production",
-        sameSite: "lax" as const,
+        secure: true, // Always secure for cross-domain cookies
+        sameSite: "none" as any, // Required for cross-domain cookies
         path: "/"
     };
 
@@ -218,9 +219,10 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     res.cookie("accessToken", accessToken, cookieOptions);
     res.cookie("refreshToken", refreshToken, cookieOptions);
 
-    // return response
+    // return response with accessToken in body for localStorage auth
     return res.status(200).json(
         new ApiResponse(200, true, "User logged in successfully", {
+            accessToken,
             user: {
                 id: user.id,
                 name: user.name,
@@ -1097,6 +1099,10 @@ export const checkAuth = asyncHandler(async(req: Request, res: Response) => {
         // Extract token from cookies or Authorization header
         const token = req.cookies?.accessToken ?? req.headers?.authorization?.replace("Bearer ", "");
         
+        console.log("🔍 CheckAuth - Token received:", token ? "Yes" : "No");
+        console.log("🔍 CheckAuth - From cookies:", req.cookies?.accessToken ? "Yes" : "No");
+        console.log("🔍 CheckAuth - From header:", req.headers?.authorization ? "Yes" : "No");
+        
         // If no token, user is not authenticated
         if (!token) {
             return res.status(200).json(
@@ -1107,18 +1113,43 @@ export const checkAuth = asyncHandler(async(req: Request, res: Response) => {
         // Verify token
         const decodedPayload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as any;
         
-        // If token is valid, return user data
+        console.log("✅ Token verified, userId:", decodedPayload.userId);
+        
+        // Fetch the full user data from database
+        const existingUser = await db.select().from(User).where(eq(User.id, decodedPayload.userId)).limit(1);
+        
+        if (existingUser.length === 0) {
+            return res.status(200).json(
+                new ApiResponse(200, false, "User not found", null)
+            );
+        }
+        
+        const user = existingUser[0];
+        
+        // Return user data (exclude sensitive fields)
+        const userData = {
+            id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            isEmailVerified: user.isEmailVerified,
+            role: user.role,
+        };
+        
+        console.log("✅ User authenticated:", userData.email);
+        
         return res.status(200).json(
-            new ApiResponse(200, true, "User is authenticated", decodedPayload)
+            new ApiResponse(200, true, "User is authenticated", userData)
         );
     } catch (error) {
         // Token is invalid or expired, user is not authenticated
         if (error instanceof jwt.JsonWebTokenError || error instanceof jwt.TokenExpiredError) {
+            console.log("❌ Token verification failed:", error.message);
             return res.status(200).json(
                 new ApiResponse(200, false, "User is not authenticated", null)
             );
         }
-        console.error('Error checking authentication:', error);
+        console.error('❌ Error checking authentication:', error);
         throw new ApiError(500, "Internal server error while checking authentication");
     }
 })

@@ -32,23 +32,35 @@ const getBaseURL = () => {
 
 export const axiosInstance = axios.create({
   baseURL: getBaseURL(),
-  withCredentials: true, // Important for cookies
   headers: {
     'Content-Type': 'application/json'
   }
 });
+
+// Add request interceptor to attach token from localStorage
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // Add response interceptor to handle common errors
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
-      console.log('Unauthorized access, redirecting to login');
-      // You could dispatch to your auth store here to clear the user
+      // Handle unauthorized access - clear token and redirect to login
+      console.log('Unauthorized access - clearing token and redirecting to login');
+      localStorage.removeItem('accessToken');
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
-);;
+);
 
 // export default axiosInstance;

@@ -32,8 +32,7 @@ app.use(cors({
   origin: corsOrigins,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["content-type", "Authorization"],
-  optionsSuccessStatus: 200
+  allowedHeaders: ["content-type", "authorization"],
 }));
 
 // Set Permissions-Policy header to remove browser warnings

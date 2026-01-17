@@ -14,45 +14,48 @@ export const useAuthStore = create((set , _)=>({ // (set, get)
   
     checkAuth: async () => {
         console.log("checkAuth called");
-        // set({ isCheckingAuth: true }); // ✅ FIXED
-      
-        // try {
-        //   const res = await axiosInstance.get("/auth/check");
-        //   console.log("✅ checkAuth response:", res.data);
-        //   if (res.data && res.data.data) {
-        //     set({ authUser: res.data.user });
-        //   } else {
-        //     set({ authUser: null });
-        //   }
-        // } catch (error) {
-        //   console.log("❌ Error checking auth:", error);
-        //   set({ authUser: null });
-        // } finally {
-        //   set({ isCheckingAuth: false });
-        // }
-
+        set({ isCheckingAuth: true });
+        
         try {
-            const res = await axiosInstance.get("/auth/check-auth");
-            console.log("✅ checkAuth response:", res);
-            console.log("Response structure:", {
-                fullResponse: res,
-                dataProperty: res.data,
-                nestedDataProperty: res.data?.data
+            // First check if token exists in localStorage
+            const token = localStorage.getItem('accessToken');
+            
+            if (!token) {
+                console.log("No token found in localStorage");
+                set({ authUser: null, isCheckingAuth: false });
+                return;
+            }
+            
+            // Use Authorization header instead of cookies
+            const res = await axiosInstance.get("/auth/check-auth", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
             
-            // Check if res.data exists and contains a data property
-            if (res.data && res.data.data) {
-            set({ authUser: res.data.data }); // Set authUser to the nested data object
+            console.log("✅ checkAuth response:", res);
+            
+            // Check if user is authenticated using the success field
+            if (res.data && res.data.success === true && res.data.data) {
+                set({ authUser: res.data.data });
+                console.log("User authenticated:", res.data.data);
             } else {
-            // If no user data is available, set authUser to null
-            set({ authUser: null });
+                console.log("User not authenticated:", res.data.message);
+                set({ authUser: null });
+                // Clear invalid tokens
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
             }
         } catch (error) {
             console.error("Error checking auth:", error);
+            // Clear tokens if they're invalid
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
             set({ authUser: null });
+        } finally {
+            set({ isCheckingAuth: false });
         }
-      }
-,      
+    },
     
 
     signup: async(data: SignUpSchemaType)=>{
@@ -79,21 +82,42 @@ export const useAuthStore = create((set , _)=>({ // (set, get)
         }
     },
 
-    login: async(data: LoginSchemaType)=>{
+    login: async(data: LoginSchemaType) => {
         console.log("Login data in the useAuthStore file: ", data)
         set({isLoggingIn: true});
         try {
             const res = await axiosInstance.post("/auth/login" , data);
             console.log("Login response from useAuthStore:",res);
-            set({authUser:res.data.user});
+
+            // Check success field
+            if (!res.data.success) {
+                toast.error(res.data.message || "Login failed");
+                return false;
+            }
+
+            // Extract user data and tokens
+            const responseData = res.data.data || res.data;
+            const user = responseData.user;
+
+            // Store tokens in localStorage for cross-domain usage
+            if (responseData.accessToken) {
+                localStorage.setItem('accessToken', responseData.accessToken);
+            }
+            if (responseData.refreshToken) {
+                localStorage.setItem('refreshToken', responseData.refreshToken);
+            }
+
+            set({authUser: user});
             toast.success(res.data.message);
+            
             // redirect to the home page
             window.location.href = "/";
-            
+
             return true;
-        } catch (error) {
-            console.log("Error logging in",error);
-            toast.error("Error logging in");
+        } catch (error: any) {
+            console.log("Error logging in", error);
+            const errorMessage = error?.response?.data?.message || "Error logging in";
+            toast.error(errorMessage);
             return false;
         }
         finally{
@@ -104,12 +128,54 @@ export const useAuthStore = create((set , _)=>({ // (set, get)
     logout:async()=>{
         try {
             await axiosInstance.post("/auth/logout");
+            // Clear localStorage tokens
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
             set({authUser: null});
-           
+
             toast.success("Logout successful");
         } catch (error) {
             console.log("Error logging out",error);
+            // Clear tokens even if logout API fails
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
             toast.error("Error logging out");
+        }
+    },
+
+    refreshToken: async()=>{
+        try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+                throw new Error('No refresh token available');
+            }
+
+            // Create a separate axios instance without the Authorization header
+            // to avoid circular dependency
+            const response = await axiosInstance.post("/auth/refresh-access-token", {}, {
+                headers: {
+                    // Don't add Authorization header for refresh
+                },
+                withCredentials: true
+            });
+
+            const responseData = response.data.data || {};
+
+            // Update tokens in localStorage
+            if (responseData.accessToken) {
+                localStorage.setItem('accessToken', responseData.accessToken);
+            }
+            if (responseData.refreshToken) {
+                localStorage.setItem('refreshToken', responseData.refreshToken);
+            }
+
+            return true;
+        } catch (error) {
+            console.error("Error refreshing token:", error);
+            // Clear tokens on refresh failure
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            return false;
         }
     }
     
